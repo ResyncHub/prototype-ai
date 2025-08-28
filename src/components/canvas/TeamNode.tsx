@@ -38,12 +38,12 @@ function TeamNode({ data, id }: TeamNodeProps) {
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="!bg-green-500 !border-green-400 !w-3 !h-3 !rounded-none !rotate-45" 
+        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-green-500 !border-green-400 !w-3 !h-3 !rounded-none !rotate-45" 
+        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       
       {/* Delete Button */}

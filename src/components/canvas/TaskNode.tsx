@@ -59,12 +59,12 @@ function TaskNode({ data, id }: TaskNodeProps) {
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="!bg-orange-500 !border-orange-400 !w-2 !h-6 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-orange-500 !border-orange-400 !w-2 !h-6 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       
       {/* Delete Button */}
