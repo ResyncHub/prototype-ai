@@ -3,9 +3,11 @@ import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Users, Calendar, AlertCircle, X } from "lucide-react";
+import { Users, AlertCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { ProjectEditDialog } from "./ProjectEditDialog";
+import { NodeContextMenu } from "./ContextMenu";
 
 interface ProjectNodeData {
   title: string;
@@ -37,6 +39,7 @@ const priorityColors = {
 function ProjectNode({ data, id }: ProjectNodeProps) {
   const { setNodes, setEdges } = useReactFlow();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const deleteNode = () => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
@@ -47,68 +50,105 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
     e.stopPropagation();
     setShowDeleteDialog(true);
   };
-  return (
-    <Card className={`w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
-      />
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
-      />
-      
-      {/* Delete Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleDeleteClick}
-        className="nodrag absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-      >
-        <X className="h-3 w-3" />
-      </Button>
 
-      {/* Delete Confirmation Dialog */}
-      <DeleteConfirmDialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-        onConfirm={deleteNode}
-        title={data.title}
-        nodeType="Project"
-      />
-      
-      <div className="p-4 space-y-3">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <h3 className="font-semibold text-card-foreground text-sm line-clamp-2">
-            {data.title}
-          </h3>
-          <AlertCircle className={`h-4 w-4 ${priorityColors[data.priority]} ml-2 flex-shrink-0`} />
-        </div>
+  const handleEditClick = () => {
+    setShowEditDialog(true);
+  };
+
+  const handleTitleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowEditDialog(true);
+  };
+
+  const handleSave = (updatedData: any) => {
+    setNodes((nodes) => 
+      nodes.map((node) => 
+        node.id === id 
+          ? { ...node, data: { ...updatedData, isNew: false } }
+          : node
+      )
+    );
+  };
+
+  return (
+    <NodeContextMenu 
+      onEdit={handleEditClick} 
+      onDelete={() => setShowDeleteDialog(true)}
+      nodeType="Project"
+    >
+      <Card className={`w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
+        <Handle 
+          type="target" 
+          position={Position.Left} 
+          className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        />
+        <Handle 
+          type="source" 
+          position={Position.Right} 
+          className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        />
         
-        {/* Status Badge */}
-        <Badge className={`${statusColors[data.status]} text-xs px-2 py-1 rounded-md`}>
-          {data.status.replace('_', ' ')}
-        </Badge>
+        {/* Delete Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDeleteClick}
+          className="nodrag absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+        >
+          <X className="h-3 w-3" />
+        </Button>
+
+        {/* Delete Confirmation Dialog */}
+        <DeleteConfirmDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+          onConfirm={deleteNode}
+          title={data.title}
+          nodeType="Project"
+        />
+
+        {/* Edit Dialog */}
+        <ProjectEditDialog
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+          data={data}
+          onSave={handleSave}
+        />
         
-        {/* Progress */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Progress</span>
-            <span>{data.progress}%</span>
+        <div className="p-4 space-y-3">
+          {/* Header */}
+          <div className="flex items-start justify-between">
+            <h3 
+              className="font-semibold text-card-foreground text-sm line-clamp-2 cursor-pointer hover:text-project-accent transition-colors" 
+              onClick={handleTitleClick}
+            >
+              {data.title}
+            </h3>
+            <AlertCircle className={`h-4 w-4 ${priorityColors[data.priority]} ml-2 flex-shrink-0`} />
           </div>
-          <Progress value={data.progress} className="h-2" />
+          
+          {/* Status Badge */}
+          <Badge className={`${statusColors[data.status]} text-xs px-2 py-1 rounded-md`}>
+            {data.status.replace('_', ' ')}
+          </Badge>
+          
+          {/* Progress */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Progress</span>
+              <span>{data.progress}%</span>
+            </div>
+            <Progress value={data.progress} className="h-2" />
+          </div>
+          
+          {/* Members */}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Users className="h-3 w-3" />
+            <span>{data.members} members</span>
+          </div>
         </div>
-        
-        {/* Members */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Users className="h-3 w-3" />
-          <span>{data.members} members</span>
-        </div>
-      </div>
-    </Card>
+      </Card>
+    </NodeContextMenu>
   );
 }
 

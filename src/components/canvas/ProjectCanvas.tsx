@@ -112,7 +112,7 @@ function ProjectCanvasFlow() {
     switch (type) {
       case 'project':
         return {
-          title: 'New Project',
+          title: 'Start Project',
           status: 'planning',
           members: 0,
           progress: 0,
