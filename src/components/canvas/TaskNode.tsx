@@ -48,7 +48,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
   };
 
   return (
-    <Card className="w-52 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 nodrag relative group">
+    <Card className="w-52 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group">
       <Handle 
         type="target" 
         position={Position.Left} 
@@ -65,7 +65,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
         variant="ghost"
         size="sm"
         onClick={deleteNode}
-        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+        className="nodrag absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
       >
         <X className="h-3 w-3" />
       </Button>
