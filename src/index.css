@@ -54,8 +54,20 @@ All colors MUST be HSL.
     --canvas-grid: 217.2 32.6% 17.5%;
     --project-card: 215 27.9% 16.9%;
     --project-card-hover: 215 25% 20%;
-    --project-accent: 142.1 76.2% 36.3%;
-    --project-accent-light: 142.1 70.6% 45.3%;
+  /* Project management colors */
+  --project-accent: 240 73% 65%;
+  --project-accent-light: 240 73% 75%;
+  --project-card: 240 10% 15%;
+  
+  /* Team colors */
+  --team-accent: 142 71% 45%;
+  --team-accent-light: 142 71% 55%;
+  --team-card: 142 10% 15%;
+  
+  /* Task colors */
+  --task-accent: 25 95% 53%;
+  --task-accent-light: 25 95% 63%;
+  --task-card: 25 10% 15%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(142.1 70.6% 45.3%), hsl(142.1 76.2% 36.3%));
@@ -70,7 +82,7 @@ All colors MUST be HSL.
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* New node animation */
+/* New node animations for different types */
 @keyframes dash-move {
   0% {
     background-position: 0% 0%;
@@ -105,6 +117,26 @@ All colors MUST be HSL.
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: xor;
   padding: 2px;
+}
+
+.new-team-animation::before {
+  background: repeating-linear-gradient(
+    45deg,
+    hsl(var(--team-accent)),
+    hsl(var(--team-accent)) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+.new-task-animation::before {
+  background: repeating-linear-gradient(
+    45deg,
+    hsl(var(--task-accent)),
+    hsl(var(--task-accent)) 8px,
+    transparent 8px,
+    transparent 16px
+  );
 }
 
   .dark {

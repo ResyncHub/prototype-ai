@@ -23,17 +23,17 @@ interface TaskNodeProps {
 const statusConfig = {
   todo: {
     icon: Circle,
-    color: 'bg-muted text-muted-foreground',
-    iconColor: 'text-muted-foreground'
+    color: 'bg-orange-500/20 text-orange-300 border border-orange-500/30',
+    iconColor: 'text-orange-400'
   },
   in_progress: {
     icon: Clock,
-    color: 'bg-blue-600 text-white',
+    color: 'bg-blue-500/20 text-blue-300 border border-blue-500/30',
     iconColor: 'text-blue-400'
   },
   completed: {
     icon: CheckCircle2,
-    color: 'bg-green-600 text-white',
+    color: 'bg-green-500/20 text-green-300 border border-green-500/30',
     iconColor: 'text-green-400'
   }
 };
@@ -55,16 +55,16 @@ function TaskNode({ data, id }: TaskNodeProps) {
   };
 
   return (
-    <Card className={`w-52 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
+    <Card className={`w-52 bg-gradient-to-br from-orange-950/50 to-amber-900/30 border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:border-orange-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-task-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        className="!bg-orange-500 !border-orange-400 !w-2 !h-6 !rounded-full" 
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        className="!bg-orange-500 !border-orange-400 !w-2 !h-6 !rounded-full" 
       />
       
       {/* Delete Button */}
@@ -88,11 +88,15 @@ function TaskNode({ data, id }: TaskNodeProps) {
       
       <div className="p-4 space-y-3">
         {/* Header */}
-        <div className="flex items-start gap-2">
-          <StatusIcon className={`h-4 w-4 mt-0.5 flex-shrink-0 ${status.iconColor}`} />
-          <h3 className="font-medium text-card-foreground text-sm line-clamp-2">
-            {data.title}
-          </h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="p-1 bg-orange-500/20 rounded">
+              <StatusIcon className={`h-3 w-3 ${status.iconColor}`} />
+            </div>
+            <h3 className="font-bold text-orange-100 text-sm line-clamp-1">
+              {data.title}
+            </h3>
+          </div>
         </div>
         
         {/* Status Badge */}
@@ -102,8 +106,8 @@ function TaskNode({ data, id }: TaskNodeProps) {
         
         {/* Assignee */}
         <div className="flex items-center gap-2">
-          <Avatar className="w-6 h-6">
-            <AvatarFallback className="text-xs bg-project-accent text-primary-foreground">
+          <Avatar className="w-6 h-6 border border-orange-500/30">
+            <AvatarFallback className="text-xs bg-orange-500/30 text-orange-200">
               {data.assignee.charAt(0)}
             </AvatarFallback>
           </Avatar>

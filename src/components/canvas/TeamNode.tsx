@@ -34,16 +34,16 @@ function TeamNode({ data, id }: TeamNodeProps) {
   };
 
   return (
-    <Card className={`w-56 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
+    <Card className={`w-56 bg-gradient-to-br from-green-950/50 to-emerald-900/30 border-2 border-green-500/30 shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:border-green-400/50 transition-all duration-300 relative group rounded-lg ${data.isNew ? 'new-team-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        className="!bg-green-500 !border-green-400 !w-3 !h-3 !rounded-none !rotate-45" 
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+        className="!bg-green-500 !border-green-400 !w-3 !h-3 !rounded-none !rotate-45" 
       />
       
       {/* Delete Button */}
@@ -68,14 +68,16 @@ function TeamNode({ data, id }: TeamNodeProps) {
       <div className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-project-accent" />
-          <h3 className="font-semibold text-card-foreground text-sm">
+          <div className="p-1.5 bg-green-500/20 rounded-md">
+            <Users className="h-4 w-4 text-green-400" />
+          </div>
+          <h3 className="font-bold text-green-100 text-sm">
             {data.name}
           </h3>
         </div>
         
         {/* Role Badge */}
-        <Badge className="bg-project-accent text-project-accent bg-opacity-20 text-xs px-2 py-1 rounded-md">
+        <Badge className="bg-green-500/20 text-green-300 border border-green-500/30 text-xs px-2 py-1 rounded-md">
           {data.role}
         </Badge>
         
@@ -87,8 +89,8 @@ function TeamNode({ data, id }: TeamNodeProps) {
           
           <div className="flex flex-wrap gap-1">
             {data.members.slice(0, 3).map((member, index) => (
-              <Avatar key={index} className="w-6 h-6">
-                <AvatarFallback className="text-xs bg-project-accent text-primary-foreground">
+              <Avatar key={index} className="w-6 h-6 border border-green-500/30">
+                <AvatarFallback className="text-xs bg-green-500/30 text-green-200">
                   {member.charAt(0)}
                 </AvatarFallback>
               </Avatar>

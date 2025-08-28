@@ -76,16 +76,16 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
       onDelete={() => setShowDeleteDialog(true)}
       nodeType="Project"
     >
-      <Card className={`w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
+      <Card className={`w-64 bg-gradient-to-br from-blue-950/50 to-blue-900/30 border-2 border-blue-500/30 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:border-blue-400/50 transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
         <Handle 
           type="target" 
           position={Position.Left} 
-          className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+          className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
         />
         <Handle 
           type="source" 
           position={Position.Right} 
-          className="!bg-project-accent !border-project-accent !w-3 !h-3" 
+          className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
         />
         
         {/* Delete Button */}
@@ -119,9 +119,10 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
           {/* Header */}
           <div className="flex items-start justify-between">
             <h3 
-              className="font-semibold text-card-foreground text-sm line-clamp-2 cursor-pointer hover:text-project-accent transition-colors" 
+              className="font-bold text-blue-100 text-sm line-clamp-2 cursor-pointer hover:text-blue-200 transition-colors flex items-center gap-2" 
               onClick={handleTitleClick}
             >
+              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
               {data.title}
             </h3>
             <AlertCircle className={`h-4 w-4 ${priorityColors[data.priority]} ml-2 flex-shrink-0`} />
