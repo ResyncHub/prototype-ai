@@ -248,7 +248,9 @@ function ProjectCanvasFlow() {
           defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
           multiSelectionKeyCode="Shift"
           deleteKeyCode="Delete"
-          selectNodesOnDrag={false}
+          nodesDraggable={true}
+          elementsSelectable={true}
+          panOnDrag={[2]}
         >
           <Controls 
             className="bg-card border-border shadow-card"
