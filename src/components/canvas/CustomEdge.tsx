@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -8,6 +8,7 @@ import {
 } from '@xyflow/react';
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 interface CustomEdgeProps {
   id: string;
@@ -33,6 +34,7 @@ export default function CustomEdge({
   markerEnd,
 }: CustomEdgeProps) {
   const { setEdges } = useReactFlow();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -43,9 +45,13 @@ export default function CustomEdge({
     targetPosition,
   });
 
-  const onEdgeClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const deleteEdge = () => {
     setEdges((edges) => edges.filter((edge) => edge.id !== id));
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
   };
 
   return (
@@ -61,13 +67,22 @@ export default function CustomEdge({
           <Button
             variant="ghost"
             size="sm"
-            onClick={onEdgeClick}
+            onClick={handleDeleteClick}
             className="h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80"
           >
             <X className="h-3 w-3" />
           </Button>
         </div>
       </EdgeLabelRenderer>
+      
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={deleteEdge}
+        title="Connection"
+        nodeType="Connection"
+      />
     </>
   );
 }

@@ -1,10 +1,11 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Users, Calendar, AlertCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 interface ProjectNodeData {
   title: string;
@@ -34,11 +35,16 @@ const priorityColors = {
 
 function ProjectNode({ data, id }: ProjectNodeProps) {
   const { setNodes, setEdges } = useReactFlow();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const deleteNode = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const deleteNode = () => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
     setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id));
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
   };
   return (
     <Card className="w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group">
@@ -57,11 +63,20 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
       <Button
         variant="ghost"
         size="sm"
-        onClick={deleteNode}
+        onClick={handleDeleteClick}
         className="nodrag absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
       >
         <X className="h-3 w-3" />
       </Button>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={deleteNode}
+        title={data.title}
+        nodeType="Project"
+      />
       
       <div className="p-4 space-y-3">
         {/* Header */}
