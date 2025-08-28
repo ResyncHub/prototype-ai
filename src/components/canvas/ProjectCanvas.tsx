@@ -159,11 +159,16 @@ function ProjectCanvasFlow() {
           fitView
           className="bg-canvas-background"
           defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          minZoom={0.1}
+          maxZoom={2}
           multiSelectionKeyCode="Shift"
           deleteKeyCode={null}
           nodesDraggable={true}
           elementsSelectable={true}
           panOnDrag={[2]}
+          zoomOnDoubleClick={true}
+          zoomOnScroll={true}
+          zoomOnPinch={true}
         >
           <Controls 
             className="bg-card border-border shadow-card"
@@ -172,16 +177,23 @@ function ProjectCanvasFlow() {
               border: '1px solid hsl(var(--border))',
               borderRadius: 'var(--radius)'
             }}
+            showZoom={true}
+            showFitView={true}
+            showInteractive={true}
           />
           <MiniMap 
-            className="bg-card border border-border shadow-card"
+            className="bg-card border border-border shadow-card !bottom-4 !left-4 !top-auto !right-auto"
             style={{
               backgroundColor: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
+              width: '150px',
+              height: '100px'
             }}
             nodeStrokeColor="hsl(var(--project-accent))"
             nodeColor="hsl(var(--project-card))"
             nodeBorderRadius={8}
+            zoomable={true}
+            pannable={true}
           />
           <Background 
             variant={BackgroundVariant.Dots}
