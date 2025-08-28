@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -11,18 +11,27 @@ import {
   Edge,
   Node,
   BackgroundVariant,
+  useReactFlow,
+  ReactFlowProvider,
+  NodeMouseHandler,
+  EdgeMouseHandler,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import ProjectNode from "./ProjectNode";
 import TeamNode from "./TeamNode";
 import TaskNode from "./TaskNode";
+import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 
 const nodeTypes = {
   project: ProjectNode,
   team: TeamNode,
   task: TaskNode,
+};
+
+const edgeTypes = {
+  custom: CustomEdge,
 };
 
 const initialNodes: Node[] = [
@@ -77,31 +86,41 @@ const initialEdges: Edge[] = [
     id: 'e1-2',
     source: 'project-1',
     target: 'team-1',
-    type: 'smoothstep',
+    type: 'custom',
     style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
   },
   {
     id: 'e1-3',
     source: 'project-1',
     target: 'task-1',
-    type: 'smoothstep',
+    type: 'custom',
     style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
   },
   {
     id: 'e2-4',
     source: 'team-1',
     target: 'task-2',
-    type: 'smoothstep',
+    type: 'custom',
     style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
   },
 ];
 
-export function ProjectCanvas() {
+function ProjectCanvasFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
+  const { getNodes, getEdges } = useReactFlow();
   
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      const edge = {
+        ...params,
+        type: 'custom',
+        style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
+      };
+      setEdges((eds) => addEdge(edge, eds));
+    },
     [setEdges],
   );
 
@@ -116,6 +135,61 @@ export function ProjectCanvas() {
     
     setNodes((nds) => [...nds, newNode]);
   };
+
+  const deleteSelectedNodes = useCallback(() => {
+    setNodes((nds) => nds.filter((node) => !selectedNodes.includes(node.id)));
+    setEdges((eds) => 
+      eds.filter((edge) => 
+        !selectedNodes.includes(edge.source) && 
+        !selectedNodes.includes(edge.target)
+      )
+    );
+    setSelectedNodes([]);
+  }, [selectedNodes, setNodes, setEdges]);
+
+  const deleteSelectedEdges = useCallback(() => {
+    setEdges((eds) => eds.filter((edge) => !selectedEdges.includes(edge.id)));
+    setSelectedEdges([]);
+  }, [selectedEdges, setEdges]);
+
+  const clearCanvas = useCallback(() => {
+    setNodes([]);
+    setEdges([]);
+    setSelectedNodes([]);
+    setSelectedEdges([]);
+  }, [setNodes, setEdges]);
+
+  const onSelectionChange = useCallback((params: any) => {
+    setSelectedNodes(params.nodes.map((node: Node) => node.id));
+    setSelectedEdges(params.edges.map((edge: Edge) => edge.id));
+  }, []);
+
+  const onNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
+    event.preventDefault();
+    // Context menu functionality can be added here
+  }, []);
+
+  const onEdgeContextMenu: EdgeMouseHandler = useCallback((event, edge) => {
+    event.preventDefault();
+    // Context menu functionality can be added here
+  }, []);
+
+  // Keyboard shortcuts
+  const onKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      if (selectedNodes.length > 0) {
+        deleteSelectedNodes();
+      } else if (selectedEdges.length > 0) {
+        deleteSelectedEdges();
+      }
+    }
+  }, [selectedNodes, selectedEdges, deleteSelectedNodes, deleteSelectedEdges]);
+
+  // Add keyboard event listener
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onKeyDown]);
 
   const getDefaultNodeData = (type: string) => {
     switch (type) {
@@ -147,7 +221,15 @@ export function ProjectCanvas() {
 
   return (
     <div className="h-full w-full relative">
-      <CanvasToolbar onAddNode={addNewNode} />
+      <CanvasToolbar 
+        onAddNode={addNewNode} 
+        onDeleteSelected={selectedNodes.length > 0 || selectedEdges.length > 0 ? () => {
+          deleteSelectedNodes();
+          deleteSelectedEdges();
+        } : undefined}
+        onClearCanvas={clearCanvas}
+        selectedCount={selectedNodes.length + selectedEdges.length}
+      />
       
       <div className="h-full">
         <ReactFlow
@@ -156,10 +238,17 @@ export function ProjectCanvas() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onSelectionChange={onSelectionChange}
+          onNodeContextMenu={onNodeContextMenu}
+          onEdgeContextMenu={onEdgeContextMenu}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           className="bg-canvas-background"
           defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          multiSelectionKeyCode="Shift"
+          deleteKeyCode="Delete"
+          selectNodesOnDrag={false}
         >
           <Controls 
             className="bg-card border-border shadow-card"
@@ -188,5 +277,13 @@ export function ProjectCanvas() {
         </ReactFlow>
       </div>
     </div>
+  );
+}
+
+export function ProjectCanvas() {
+  return (
+    <ReactFlowProvider>
+      <ProjectCanvasFlow />
+    </ReactFlowProvider>
   );
 }

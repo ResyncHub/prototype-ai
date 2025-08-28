@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
+import { Users, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface TeamNodeData {
   name: string;
@@ -13,11 +14,20 @@ interface TeamNodeData {
 
 interface TeamNodeProps {
   data: TeamNodeData;
+  id: string;
 }
 
-function TeamNode({ data }: TeamNodeProps) {
+function TeamNode({ data, id }: TeamNodeProps) {
+  const { setNodes, setEdges } = useReactFlow();
+
+  const deleteNode = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nodes) => nodes.filter((node) => node.id !== id));
+    setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id));
+  };
+
   return (
-    <Card className="w-56 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 nodrag">
+    <Card className="w-56 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 nodrag relative group">
       <Handle 
         type="target" 
         position={Position.Left} 
@@ -28,6 +38,16 @@ function TeamNode({ data }: TeamNodeProps) {
         position={Position.Right} 
         className="!bg-project-accent !border-project-accent !w-3 !h-3" 
       />
+      
+      {/* Delete Button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={deleteNode}
+        className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+      >
+        <X className="h-3 w-3" />
+      </Button>
       
       <div className="p-4 space-y-3">
         {/* Header */}
