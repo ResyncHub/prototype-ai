@@ -174,22 +174,6 @@ function ProjectCanvasFlow() {
     // Context menu functionality can be added here
   }, []);
 
-  // Keyboard shortcuts
-  const onKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
-      if (selectedNodes.length > 0) {
-        deleteSelectedNodes();
-      } else if (selectedEdges.length > 0) {
-        deleteSelectedEdges();
-      }
-    }
-  }, [selectedNodes, selectedEdges, deleteSelectedNodes, deleteSelectedEdges]);
-
-  // Add keyboard event listener
-  useEffect(() => {
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onKeyDown]);
 
   const getDefaultNodeData = (type: string) => {
     switch (type) {
@@ -223,10 +207,6 @@ function ProjectCanvasFlow() {
     <div className="h-full w-full relative">
       <CanvasToolbar 
         onAddNode={addNewNode} 
-        onDeleteSelected={selectedNodes.length > 0 || selectedEdges.length > 0 ? () => {
-          deleteSelectedNodes();
-          deleteSelectedEdges();
-        } : undefined}
         onClearCanvas={clearCanvas}
         selectedCount={selectedNodes.length + selectedEdges.length}
       />
@@ -247,7 +227,7 @@ function ProjectCanvasFlow() {
           className="bg-canvas-background"
           defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
           multiSelectionKeyCode="Shift"
-          deleteKeyCode="Delete"
+          deleteKeyCode={null}
           nodesDraggable={true}
           elementsSelectable={true}
           panOnDrag={[2]}

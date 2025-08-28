@@ -1,28 +1,20 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Trash2, Eraser, Link, Unlink } from "lucide-react";
+import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
 interface CanvasToolbarProps {
   onAddNode: (type: 'project' | 'team' | 'task') => void;
-  onDeleteSelected?: () => void;
   onClearCanvas: () => void;
   selectedCount: number;
 }
 
-export function CanvasToolbar({ onAddNode, onDeleteSelected, onClearCanvas, selectedCount }: CanvasToolbarProps) {
+export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: CanvasToolbarProps) {
   const handleClearCanvas = () => {
     onClearCanvas();
     toast.success("Canvas cleared");
-  };
-
-  const handleDeleteSelected = () => {
-    if (onDeleteSelected) {
-      onDeleteSelected();
-      toast.success(`Deleted ${selectedCount} items`);
-    }
   };
 
   return (
@@ -77,16 +69,6 @@ export function CanvasToolbar({ onAddNode, onDeleteSelected, onClearCanvas, sele
             <Button
               variant="ghost"
               size="sm"
-              onClick={handleDeleteSelected}
-              disabled={!onDeleteSelected}
-              className="h-8 px-2 hover:bg-destructive hover:text-destructive-foreground transition-colors disabled:opacity-50"
-              title="Delete Selected (Del)"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
               onClick={handleClearCanvas}
               className="h-8 px-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
               title="Clear Canvas"
@@ -135,7 +117,7 @@ export function CanvasToolbar({ onAddNode, onDeleteSelected, onClearCanvas, sele
               {selectedCount} selected
             </Badge>
             <span className="text-xs text-muted-foreground">
-              Press Del to delete • Drag to move • Shift+Click for multi-select
+              Drag to move • Shift+Click for multi-select
             </span>
           </div>
         </Card>
