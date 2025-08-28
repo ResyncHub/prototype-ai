@@ -34,76 +34,9 @@ const edgeTypes = {
   custom: CustomEdge,
 };
 
-const initialNodes: Node[] = [
-  {
-    id: 'project-1',
-    type: 'project',
-    position: { x: 200, y: 100 },
-    data: {
-      title: 'Website Redesign',
-      status: 'active',
-      members: 5,
-      progress: 65,
-      priority: 'high'
-    },
-  },
-  {
-    id: 'team-1',
-    type: 'team',
-    position: { x: 500, y: 200 },
-    data: {
-      name: 'Design Team',
-      members: ['Alice', 'Bob', 'Carol'],
-      role: 'UI/UX Design'
-    },
-  },
-  {
-    id: 'task-1',
-    type: 'task',
-    position: { x: 100, y: 300 },
-    data: {
-      title: 'Create wireframes',
-      assignee: 'Alice',
-      status: 'completed',
-      dueDate: '2024-01-15'
-    },
-  },
-  {
-    id: 'task-2',
-    type: 'task',
-    position: { x: 400, y: 400 },
-    data: {
-      title: 'Develop components',
-      assignee: 'Bob',
-      status: 'in_progress',
-      dueDate: '2024-01-20'
-    },
-  },
-];
+const initialNodes: Node[] = [];
 
-const initialEdges: Edge[] = [
-  {
-    id: 'e1-2',
-    source: 'project-1',
-    target: 'team-1',
-    type: 'custom',
-    style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
-  },
-  {
-    id: 'e1-3',
-    source: 'project-1',
-    target: 'task-1',
-    type: 'custom',
-    style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
-  },
-  {
-    id: 'e2-4',
-    source: 'team-1',
-    target: 'task-2',
-    type: 'custom',
-    style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
-  },
-];
+const initialEdges: Edge[] = [];
 
 function ProjectCanvasFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
