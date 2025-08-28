@@ -71,12 +71,12 @@ All colors MUST be HSL.
 }
 
 /* New node animation */
-@keyframes border-dance {
+@keyframes border-spin {
   0% {
-    background-position: 0% 0%;
+    transform: rotate(0deg);
   }
   100% {
-    background-position: 100% 100%;
+    transform: rotate(360deg);
   }
 }
 
@@ -87,19 +87,19 @@ All colors MUST be HSL.
 .new-node-animation::before {
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, 
-    hsl(var(--project-accent)) 0%, 
-    transparent 25%, 
-    transparent 50%, 
-    hsl(var(--project-accent)) 75%, 
-    hsl(var(--project-accent)) 100%);
-  background-size: 20px 20px;
-  border-radius: calc(var(--radius) + 2px);
-  animation: border-dance 2s linear infinite;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: conic-gradient(
+    from 0deg,
+    hsl(var(--project-accent)),
+    transparent 70%,
+    transparent 90%,
+    hsl(var(--project-accent))
+  );
+  border-radius: calc(var(--radius) + 3px);
+  animation: border-spin 2s linear infinite;
   z-index: -1;
 }
 
