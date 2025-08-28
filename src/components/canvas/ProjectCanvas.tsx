@@ -130,7 +130,7 @@ function ProjectCanvasFlow() {
       id,
       type,
       position: { x: Math.random() * 500 + 100, y: Math.random() * 400 + 100 },
-      data: getDefaultNodeData(type),
+      data: { ...getDefaultNodeData(type), isNew: true },
     };
     
     setNodes((nds) => [...nds, newNode]);

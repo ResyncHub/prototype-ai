@@ -12,6 +12,7 @@ interface TaskNodeData {
   assignee: string;
   status: 'todo' | 'in_progress' | 'completed';
   dueDate: string;
+  isNew?: boolean;
 }
 
 interface TaskNodeProps {
@@ -54,7 +55,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
   };
 
   return (
-    <Card className="w-52 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group">
+    <Card className={`w-52 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 

@@ -13,6 +13,7 @@ interface ProjectNodeData {
   members: number;
   progress: number;
   priority: 'low' | 'medium' | 'high';
+  isNew?: boolean;
 }
 
 interface ProjectNodeProps {
@@ -47,7 +48,7 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
     setShowDeleteDialog(true);
   };
   return (
-    <Card className="w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group">
+    <Card className={`w-64 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 

@@ -11,6 +11,7 @@ interface TeamNodeData {
   name: string;
   members: string[];
   role: string;
+  isNew?: boolean;
 }
 
 interface TeamNodeProps {
@@ -33,7 +34,7 @@ function TeamNode({ data, id }: TeamNodeProps) {
   };
 
   return (
-    <Card className="w-56 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group">
+    <Card className={`w-56 bg-gradient-card border-border shadow-card hover:shadow-card-hover transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 

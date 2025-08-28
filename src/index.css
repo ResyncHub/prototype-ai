@@ -67,8 +67,41 @@ All colors MUST be HSL.
     --shadow-card-hover: 0 10px 15px -3px hsl(142.1 70.6% 45.3% / 0.2), 0 4px 6px -2px hsl(142.1 70.6% 45.3% / 0.1);
 
     /* Animation */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* New node animation */
+@keyframes border-dance {
+  0% {
+    background-position: 0% 0%;
   }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+.new-node-animation {
+  position: relative;
+}
+
+.new-node-animation::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    hsl(var(--project-accent)) 0%, 
+    transparent 25%, 
+    transparent 50%, 
+    hsl(var(--project-accent)) 75%, 
+    hsl(var(--project-accent)) 100%);
+  background-size: 20px 20px;
+  border-radius: calc(var(--radius) + 2px);
+  animation: border-dance 2s linear infinite;
+  z-index: -1;
+}
 
   .dark {
     /* Dark mode uses same colors as default since we're dark by default */
