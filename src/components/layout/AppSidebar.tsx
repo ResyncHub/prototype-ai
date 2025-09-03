@@ -19,7 +19,7 @@ export function AppSidebar() {
           <img 
             src="/lovable-uploads/adb341f9-03c5-4b86-8b24-586afc981fea.png" 
             alt="PROTOTYPE"
-            className="h-8 object-contain"
+            className="h-40 object-contain"
           />
         </div>
       </SidebarHeader>
