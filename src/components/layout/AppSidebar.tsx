@@ -13,18 +13,8 @@ const navigation = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-sidebar-border bg-sidebar">
-      <SidebarHeader className="p-0 pt-0">
-        <div className="flex items-start justify-center -mt-2">
-          <img 
-            src="/lovable-uploads/bab98990-b821-4f3c-b23f-93143f8c722c.png" 
-            alt="PROTOTYPE"
-            className="h-40 object-contain"
-          />
-        </div>
-      </SidebarHeader>
-      
-      <SidebarContent className="px-4 py-2">
+    <Sidebar className="border-sidebar-border bg-sidebar h-[calc(100vh-3rem)]">
+      <SidebarContent className="px-4 py-4">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
