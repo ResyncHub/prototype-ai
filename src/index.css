@@ -92,6 +92,23 @@ All colors MUST be HSL.
   }
 }
 
+/* Minimap styles for different node types */
+.react-flow__minimap .project {
+  fill: hsl(var(--project-accent));
+}
+
+.react-flow__minimap .team {
+  fill: hsl(var(--team-accent));
+}
+
+.react-flow__minimap .task {
+  fill: hsl(var(--task-accent));
+}
+
+.react-flow__minimap .default {
+  fill: hsl(var(--primary));
+}
+
 .new-node-animation {
   position: relative;
 }

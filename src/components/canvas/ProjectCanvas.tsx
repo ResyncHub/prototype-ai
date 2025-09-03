@@ -45,6 +45,8 @@ function ProjectCanvasFlow() {
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const { getNodes, getEdges } = useReactFlow();
   
+  const nodeClassName = (node: Node) => node.type || 'default';
+  
   const onConnect = useCallback(
     (params: Connection) => {
       const edge = {
@@ -189,9 +191,10 @@ function ProjectCanvasFlow() {
               width: '150px',
               height: '100px'
             }}
-            nodeStrokeColor="hsl(var(--project-accent))"
-            nodeColor="hsl(var(--project-card))"
-            nodeBorderRadius={8}
+            nodeStrokeColor="hsl(var(--foreground))"
+            nodeColor="hsl(var(--primary))"
+            nodeBorderRadius={4}
+            nodeClassName={nodeClassName}
             zoomable={true}
             pannable={true}
           />
