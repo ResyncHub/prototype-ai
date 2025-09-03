@@ -13,7 +13,7 @@ const navigation = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-sidebar-border bg-sidebar h-[calc(100vh-3rem)]">
+    <Sidebar className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)]">
       <SidebarContent className="px-4 py-4">
         <SidebarGroup>
           <SidebarGroupContent>
