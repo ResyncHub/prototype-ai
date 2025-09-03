@@ -40,14 +40,17 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* Sidebar */
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
     --sidebar-primary: 142.1 70.6% 45.3%;
     --sidebar-primary-foreground: 144.9 80.4% 10%;
-    --sidebar-accent: 215 27.9% 16.9%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-ring: 142.1 70.6% 45.3%;
+
+    /* Brand colors */
+    --brand-white: 0 0% 100%;
 
     /* Custom Project Management Colors */
     --canvas-background: 220 10% 8%;

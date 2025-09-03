@@ -8,7 +8,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-bg">
+      <div className="min-h-screen flex w-full bg-canvas-background">
         <AppSidebar />
         <SidebarInset className="flex-1">
           <main className="flex-1 overflow-hidden">
