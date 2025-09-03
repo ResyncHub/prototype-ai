@@ -43,6 +43,12 @@ export function AppSidebar() {
                           <span>Add Project</span>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton className="group-data-[collapsible=icon]:hidden">
+                          <Layers className="h-4 w-4" />
+                          <span>My Projects</span>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </SidebarMenuItem>
