@@ -28,10 +28,7 @@ export function TopNavigation() {
       <div className="flex items-center gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded bg-gradient-primary flex items-center justify-center">
-            <Database className="h-3 w-3 text-primary-foreground" />
-          </div>
-          <span className="text-sm font-semibold text-foreground">ProjectFlow</span>
+          <span className="text-lg font-bold text-primary tracking-wider">PROTOTYPE</span>
         </div>
 
         {/* User Email */}
