@@ -17,7 +17,7 @@ export function AppSidebar() {
       <SidebarHeader className="border-b border-sidebar-border p-6">
         <div className="flex items-center justify-center">
           <img 
-            src="/lovable-uploads/adb341f9-03c5-4b86-8b24-586afc981fea.png" 
+            src="/lovable-uploads/bab98990-b821-4f3c-b23f-93143f8c722c.png" 
             alt="PROTOTYPE"
             className="h-40 object-contain"
           />
