@@ -21,8 +21,8 @@ export function AppSidebar() {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <SidebarContent className="px-2 py-4">
-        <SidebarGroup>
+      <SidebarContent className="py-3 px-2 group-data-[collapsible=icon]:px-1">
+        <SidebarGroup className="group-data-[collapsible=icon]:p-1">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {navigation.map((item) => (
