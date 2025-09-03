@@ -1,15 +1,11 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { ProjectCanvas } from "@/components/canvas/ProjectCanvas";
-import { TopNavigation } from "@/components/layout/TopNavigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Index = () => {
   return (
     <AppLayout>
       <div className="flex flex-col h-screen">
-        {/* Top Navigation Bar */}
-        <TopNavigation />
-        
         {/* Main Canvas Area */}
         <div className="flex-1">
           <ProjectCanvas />
