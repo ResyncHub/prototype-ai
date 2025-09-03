@@ -172,17 +172,6 @@ function ProjectCanvasFlow() {
           zoomOnScroll={true}
           zoomOnPinch={true}
         >
-          <Controls 
-            className="bg-card border-border shadow-card"
-            style={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              borderRadius: 'var(--radius)'
-            }}
-            showZoom={true}
-            showFitView={true}
-            showInteractive={true}
-          />
           <Background 
             variant={BackgroundVariant.Dots}
             gap={24}
