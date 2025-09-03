@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { FolderKanban, Plus, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -12,12 +12,16 @@ const navigation = [
 ];
 
 export function AppSidebar() {
+  const { open, setOpen } = useSidebar();
+  
   return (
     <Sidebar 
-      className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)]"
+      className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)] group"
       collapsible="icon"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
     >
-      <SidebarContent className="px-4 py-4">
+      <SidebarContent className="px-2 py-4">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
