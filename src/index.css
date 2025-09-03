@@ -178,6 +178,36 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  /* Remove default focus outline and red underlines */
+  *:focus {
+    outline: none !important;
+  }
+
+  *:focus-visible {
+    outline: none !important;
+  }
+
+  a:focus,
+  a:active,
+  a:visited,
+  button:focus,
+  button:active,
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none !important;
+    text-decoration: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove red outline from clicked elements */
+  *:active,
+  *:focus:active {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
