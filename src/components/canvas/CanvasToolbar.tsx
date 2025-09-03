@@ -9,9 +9,10 @@ interface CanvasToolbarProps {
   onAddNode: (type: 'project' | 'team' | 'task') => void;
   onClearCanvas: () => void;
   selectedCount: number;
+  projectName?: string;
 }
 
-export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: CanvasToolbarProps) {
+export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount, projectName }: CanvasToolbarProps) {
   const handleClearCanvas = () => {
     onClearCanvas();
     toast.success("Canvas cleared");
@@ -19,6 +20,16 @@ export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: Canva
 
   return (
     <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+      {/* Project Name */}
+      {projectName && (
+        <Card className="bg-card border-border shadow-card px-3 py-2">
+          <div className="flex items-center gap-2">
+            <FolderKanban className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">{projectName}</span>
+          </div>
+        </Card>
+      )}
+      
       {/* Main Toolbar */}
       <Card className="bg-card border-border shadow-card p-2">
         <div className="flex items-center gap-2">

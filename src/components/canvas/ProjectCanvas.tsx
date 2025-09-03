@@ -23,6 +23,10 @@ import TeamNode from "./TeamNode";
 import TaskNode from "./TaskNode";
 import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
+import { useProject } from "@/contexts/ProjectContext";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FolderKanban, Plus } from "lucide-react";
 
 const nodeTypes = {
   project: ProjectNode,
@@ -44,6 +48,7 @@ function ProjectCanvasFlow() {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const { getNodes, getEdges } = useReactFlow();
+  const { currentProject } = useProject();
   
   const nodeClassName = (node: Node) => node.type || 'default';
   
@@ -138,12 +143,32 @@ function ProjectCanvasFlow() {
     }
   };
 
+  // Show empty state if no project is selected
+  if (!currentProject) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-canvas-background">
+        <Card className="max-w-md mx-auto text-center">
+          <CardHeader className="pb-4">
+            <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
+              <FolderKanban className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <CardTitle>No Project Selected</CardTitle>
+            <CardDescription className="text-base">
+              Select a project from the sidebar to start working on your canvas, or create a new project to get started.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full relative">
       <CanvasToolbar 
         onAddNode={addNewNode} 
         onClearCanvas={clearCanvas}
         selectedCount={selectedNodes.length + selectedEdges.length}
+        projectName={currentProject.name}
       />
       
       <div className="h-full">
