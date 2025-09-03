@@ -28,7 +28,11 @@ export function TopNavigation() {
       <div className="flex items-center gap-4">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-primary tracking-wider">PROTOTYPE</span>
+          <img 
+            src="/lovable-uploads/60dab377-d9c4-4f76-9210-14f21db16ff3.png" 
+            alt="PROTOTYPE"
+            className="h-6 object-contain"
+          />
         </div>
 
         {/* User Email */}
