@@ -3,10 +3,16 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import { FolderKanban, Plus, Layers, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AddProjectDialog } from "@/components/project/AddProjectDialog";
+import { useProjects } from "@/hooks/useProjects";
+import { useProject } from "@/contexts/ProjectContext";
 
 export function AppSidebar() {
   const { open, setOpen } = useSidebar();
   const [projectsOpen, setProjectsOpen] = useState(false);
+  const [addProjectOpen, setAddProjectOpen] = useState(false);
+  const { projects } = useProjects();
+  const { setCurrentProject } = useProject();
   
   return (
     <Sidebar 
@@ -38,7 +44,10 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       <SidebarMenuSubItem>
-                        <SidebarMenuSubButton className="group-data-[collapsible=icon]:hidden">
+                        <SidebarMenuSubButton 
+                          className="group-data-[collapsible=icon]:hidden"
+                          onClick={() => setAddProjectOpen(true)}
+                        >
                           <Plus className="h-4 w-4" />
                           <span>Add Project</span>
                         </SidebarMenuSubButton>
@@ -63,6 +72,11 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <AddProjectDialog 
+        open={addProjectOpen} 
+        onOpenChange={setAddProjectOpen}
+        onProjectCreated={(project) => setCurrentProject(project)}
+      />
     </Sidebar>
   );
 }
