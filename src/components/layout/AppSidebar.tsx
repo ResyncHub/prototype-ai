@@ -15,14 +15,12 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-sidebar-border bg-sidebar">
       <SidebarHeader className="border-b border-sidebar-border p-6">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <Layers className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold text-sidebar-foreground">ProjectFlow</h1>
-            <p className="text-xs text-sidebar-foreground/60">Project Management</p>
-          </div>
+        <div className="flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/adb341f9-03c5-4b86-8b24-586afc981fea.png" 
+            alt="PROTOTYPE"
+            className="h-8 object-contain"
+          />
         </div>
       </SidebarHeader>
       
