@@ -28,7 +28,7 @@ export function UserProfile() {
     if (updateError) {
       setError(updateError.message);
     } else {
-      setSuccess('Profil został zaktualizowany');
+      setSuccess('Profile updated successfully');
     }
     setLoading(false);
   };
@@ -48,10 +48,10 @@ export function UserProfile() {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <User className="h-5 w-5 text-primary" />
-            <CardTitle>Informacje o profilu</CardTitle>
+            <CardTitle>Profile Information</CardTitle>
           </div>
           <CardDescription>
-            Zarządzaj swoimi danymi osobowymi
+            Manage your personal information
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleUpdateProfile}>
@@ -76,19 +76,19 @@ export function UserProfile() {
                 className="bg-muted"
               />
               <p className="text-xs text-muted-foreground">
-                Email nie może być zmieniony
+                Email cannot be changed
               </p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="fullName">Imię i nazwisko</Label>
+              <Label htmlFor="fullName">Full Name</Label>
               <Input
                 id="fullName"
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 disabled={loading}
-                placeholder="Wprowadź swoje imię i nazwisko"
+                placeholder="Enter your full name"
               />
             </div>
           </CardContent>
@@ -97,10 +97,10 @@ export function UserProfile() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Zapisywanie...
+                  Saving...
                 </>
               ) : (
-                'Zaktualizuj profil'
+                'Update Profile'
               )}
             </Button>
           </CardFooter>
@@ -111,19 +111,19 @@ export function UserProfile() {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <Settings className="h-5 w-5 text-primary" />
-            <CardTitle>Ustawienia konta</CardTitle>
+            <CardTitle>Account Settings</CardTitle>
           </div>
           <CardDescription>
-            Zarządzaj swoim kontem i bezpieczeństwem
+            Manage your account and security
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Data utworzenia konta</Label>
+            <Label>Account Created</Label>
             <p className="text-sm text-muted-foreground">
               {profile?.created_at 
-                ? new Date(profile.created_at).toLocaleDateString('pl-PL')
-                : 'Nieznana'
+                ? new Date(profile.created_at).toLocaleDateString('en-US')
+                : 'Unknown'
               }
             </p>
           </div>
@@ -131,12 +131,12 @@ export function UserProfile() {
           <Separator />
 
           <div className="space-y-4">
-            <h4 className="font-medium">Zmiana hasła</h4>
+            <h4 className="font-medium">Change Password</h4>
             <p className="text-sm text-muted-foreground">
-              Aby zmienić hasło, skorzystaj z opcji "Zapomniałeś hasła?" na stronie logowania.
+              To change your password, use the "Forgot password?" option on the login page.
             </p>
             <Button variant="outline" asChild>
-              <a href="/forgot-password">Zresetuj hasło</a>
+              <a href="/forgot-password">Reset Password</a>
             </Button>
           </div>
         </CardContent>
@@ -146,10 +146,10 @@ export function UserProfile() {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <LogOut className="h-5 w-5 text-destructive" />
-            <CardTitle className="text-destructive">Wyloguj się</CardTitle>
+            <CardTitle className="text-destructive">Sign Out</CardTitle>
           </div>
           <CardDescription>
-            Zakończ bieżącą sesję
+            End your current session
           </CardDescription>
         </CardHeader>
         <CardFooter>
@@ -161,10 +161,10 @@ export function UserProfile() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Wylogowywanie...
+                Signing out...
               </>
             ) : (
-              'Wyloguj się'
+              'Sign Out'
             )}
           </Button>
         </CardFooter>

@@ -42,9 +42,9 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-background to-accent flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-card">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">Zaloguj się</CardTitle>
+          <CardTitle className="text-2xl font-bold text-primary">Sign In</CardTitle>
           <CardDescription>
-            Wprowadź swoje dane aby uzyskać dostęp do konta
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -59,7 +59,7 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
-                placeholder="twoj@email.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -67,7 +67,7 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Hasło</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -89,10 +89,10 @@ export default function Login() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logowanie...
+                    Signing in...
                   </>
                 ) : (
-                  'Zaloguj się'
+                  'Sign In'
                 )}
               </Button>
               <div className="text-center space-y-2">
@@ -100,12 +100,12 @@ export default function Login() {
                   to="/forgot-password" 
                   className="text-sm text-primary hover:underline"
                 >
-                  Zapomniałeś hasła?
+                  Forgot password?
                 </Link>
                 <div className="text-sm text-muted-foreground">
-                  Nie masz konta?{' '}
+                  Don't have an account?{' '}
                   <Link to="/signup" className="text-primary hover:underline">
-                    Zarejestruj się
+                    Sign up
                   </Link>
                 </div>
               </div>

@@ -31,7 +31,7 @@ export default function Signup() {
     e.preventDefault();
     
     if (!acceptTerms) {
-      setError('Musisz zaakceptować regulamin');
+      setError('You must accept the terms and conditions');
       return;
     }
 
@@ -54,20 +54,20 @@ export default function Signup() {
       <div className="min-h-screen bg-gradient-to-br from-background to-accent flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-primary">Sprawdź swoją pocztę</CardTitle>
+            <CardTitle className="text-2xl font-bold text-primary">Check your email</CardTitle>
           </CardHeader>
           <CardContent>
             <Alert>
               <AlertDescription>
-                Wysłaliśmy link aktywacyjny na adres <strong>{email}</strong>. 
-                Kliknij w link w wiadomości, aby aktywować konto.
+                We've sent an activation link to <strong>{email}</strong>. 
+                Click the link in the email to activate your account.
               </AlertDescription>
             </Alert>
           </CardContent>
           <CardFooter>
             <Link to="/login" className="w-full">
               <Button variant="outline" className="w-full">
-                Powrót do logowania
+                Back to login
               </Button>
             </Link>
           </CardFooter>
@@ -80,9 +80,9 @@ export default function Signup() {
     <div className="min-h-screen bg-gradient-to-br from-background to-accent flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-card">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">Zarejestruj się</CardTitle>
+          <CardTitle className="text-2xl font-bold text-primary">Sign Up</CardTitle>
           <CardDescription>
-            Stwórz nowe konto aby rozpocząć pracę
+            Create a new account to get started
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -93,11 +93,11 @@ export default function Signup() {
               </Alert>
             )}
             <div className="space-y-2">
-              <Label htmlFor="fullName">Imię i nazwisko</Label>
+              <Label htmlFor="fullName">Full Name</Label>
               <Input
                 id="fullName"
                 type="text"
-                placeholder="Jan Kowalski"
+                placeholder="John Doe"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
@@ -109,7 +109,7 @@ export default function Signup() {
               <Input
                 id="email"
                 type="email"
-                placeholder="twoj@email.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -117,7 +117,7 @@ export default function Signup() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Hasło</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -140,13 +140,13 @@ export default function Signup() {
                 htmlFor="terms" 
                 className="text-sm font-normal cursor-pointer"
               >
-                Akceptuję{' '}
+                I accept the{' '}
                 <Link to="/terms" className="text-primary hover:underline">
-                  regulamin
+                  terms of service
                 </Link>
-                {' '}i{' '}
+                {' '}and{' '}
                 <Link to="/privacy" className="text-primary hover:underline">
-                  politykę prywatności
+                  privacy policy
                 </Link>
               </Label>
             </div>
@@ -161,17 +161,17 @@ export default function Signup() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Rejestracja...
+                    Creating account...
                   </>
                 ) : (
-                  'Zarejestruj się'
+                  'Sign Up'
                 )}
               </Button>
               <div className="text-center">
                 <div className="text-sm text-muted-foreground">
-                  Masz już konto?{' '}
+                  Already have an account?{' '}
                   <Link to="/login" className="text-primary hover:underline">
-                    Zaloguj się
+                    Sign in
                   </Link>
                 </div>
               </div>

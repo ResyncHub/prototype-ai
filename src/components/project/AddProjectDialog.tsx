@@ -21,8 +21,8 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
   const handleSubmit = async () => {
     if (!projectName.trim()) {
       toast({
-        title: "Błąd",
-        description: "Nazwa projektu jest wymagana",
+        title: "Error",
+        description: "Project name is required",
         variant: "destructive",
       });
       return;
@@ -34,8 +34,8 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
       
       if (!user) {
         toast({
-          title: "Błąd",
-          description: "Musisz być zalogowany żeby utworzyć projekt",
+          title: "Error",
+          description: "You must be logged in to create a project",
           variant: "destructive",
         });
         return;
@@ -53,8 +53,8 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
       if (error) throw error;
 
       toast({
-        title: "Sukces",
-        description: "Projekt został utworzony",
+        title: "Success",
+        description: "Project created successfully",
       });
 
       onProjectCreated(data);
@@ -63,8 +63,8 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
     } catch (error) {
       console.error("Error creating project:", error);
       toast({
-        title: "Błąd",
-        description: "Nie udało się utworzyć projektu",
+        title: "Error",
+        description: "Failed to create project",
         variant: "destructive",
       });
     } finally {
@@ -76,22 +76,22 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Dodaj nowy projekt</DialogTitle>
+          <DialogTitle>Add New Project</DialogTitle>
           <DialogDescription>
-            Wprowadź nazwę nowego projektu. Canvas zostanie przypisany do tego projektu.
+            Enter the name of your new project. The canvas will be assigned to this project.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Nazwa
+              Name
             </Label>
             <Input
               id="name"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               className="col-span-3"
-              placeholder="Wpisz nazwę projektu"
+              placeholder="Enter project name"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSubmit();
@@ -102,10 +102,10 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Anuluj
+            Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={isLoading}>
-            {isLoading ? "Tworzenie..." : "Utwórz projekt"}
+            {isLoading ? "Creating..." : "Create Project"}
           </Button>
         </DialogFooter>
       </DialogContent>

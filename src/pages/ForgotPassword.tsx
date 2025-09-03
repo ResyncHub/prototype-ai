@@ -36,20 +36,20 @@ export default function ForgotPassword() {
       <div className="min-h-screen bg-gradient-to-br from-background to-accent flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-primary">Link wysłany</CardTitle>
+            <CardTitle className="text-2xl font-bold text-primary">Link sent</CardTitle>
           </CardHeader>
           <CardContent>
             <Alert>
               <AlertDescription>
-                Jeśli konto z adresem <strong>{email}</strong> istnieje, 
-                wysłaliśmy link do resetowania hasła.
+                If an account with <strong>{email}</strong> exists, 
+                we've sent a password reset link.
               </AlertDescription>
             </Alert>
           </CardContent>
           <CardFooter>
             <Link to="/login" className="w-full">
               <Button variant="outline" className="w-full">
-                Powrót do logowania
+                Back to login
               </Button>
             </Link>
           </CardFooter>
@@ -62,9 +62,9 @@ export default function ForgotPassword() {
     <div className="min-h-screen bg-gradient-to-br from-background to-accent flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-card">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-primary">Resetuj hasło</CardTitle>
+          <CardTitle className="text-2xl font-bold text-primary">Reset password</CardTitle>
           <CardDescription>
-            Wprowadź swój adres email, a wyślemy Ci link do resetowania hasła
+            Enter your email address and we'll send you a reset link
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -79,7 +79,7 @@ export default function ForgotPassword() {
               <Input
                 id="email"
                 type="email"
-                placeholder="twoj@email.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -97,15 +97,15 @@ export default function ForgotPassword() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Wysyłanie...
+                    Sending...
                   </>
                 ) : (
-                  'Wyślij link resetujący'
+                  'Send reset link'
                 )}
               </Button>
               <div className="text-center">
                 <Link to="/login" className="text-sm text-primary hover:underline">
-                  Powrót do logowania
+                  Back to login
                 </Link>
               </div>
             </div>
