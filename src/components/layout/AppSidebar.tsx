@@ -13,7 +13,10 @@ const navigation = [
 
 export function AppSidebar() {
   return (
-    <Sidebar className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)]">
+    <Sidebar 
+      className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)]"
+      collapsible="icon"
+    >
       <SidebarContent className="px-4 py-4">
         <SidebarGroup>
           <SidebarGroupContent>
@@ -22,6 +25,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     className="h-10 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                    tooltip={item.title}
                   >
                     <item.icon className="h-4 w-4" />
                     <span>{item.title}</span>
