@@ -14,8 +14,8 @@ const navigation = [
 export function AppSidebar() {
   return (
     <Sidebar className="border-sidebar-border bg-sidebar">
-      <SidebarHeader className="border-b border-sidebar-border p-2 pt-4">
-        <div className="flex items-start justify-center">
+      <SidebarHeader className="border-b border-sidebar-border p-0 pt-0">
+        <div className="flex items-start justify-center -mt-2">
           <img 
             src="/lovable-uploads/bab98990-b821-4f3c-b23f-93143f8c722c.png" 
             alt="PROTOTYPE"
