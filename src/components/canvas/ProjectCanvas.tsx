@@ -183,21 +183,6 @@ function ProjectCanvasFlow() {
             showFitView={true}
             showInteractive={true}
           />
-          <MiniMap 
-            className="bg-card border border-border shadow-card !bottom-4 !left-4 !top-auto !right-auto"
-            style={{
-              backgroundColor: 'hsl(var(--card))',
-              border: '1px solid hsl(var(--border))',
-              width: '150px',
-              height: '100px'
-            }}
-            nodeStrokeColor="hsl(var(--foreground))"
-            nodeColor="hsl(var(--primary))"
-            nodeBorderRadius={4}
-            nodeClassName={nodeClassName}
-            zoomable={true}
-            pannable={true}
-          />
           <Background 
             variant={BackgroundVariant.Dots}
             gap={24}
