@@ -49,6 +49,7 @@ function ProjectCanvasFlow() {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const [showPerformanceInfo, setShowPerformanceInfo] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const { setViewport, getViewport } = useReactFlow();
   const { currentProject } = useProject();
   const { updateLastAccessed } = useProjectManagement();
@@ -69,6 +70,18 @@ function ProjectCanvasFlow() {
   const nodes = lazyNodes;
   const edges = lazyEdges;
   const isLoading = lazyLoading;
+
+  // Mark initial load complete once first lazy load finishes
+  useEffect(() => {
+    if (!isLoading && currentProject) {
+      setHasLoadedOnce(true);
+    }
+  }, [isLoading, currentProject]);
+
+  // Reset initial-load flag when switching projects
+  useEffect(() => {
+    setHasLoadedOnce(false);
+  }, [currentProject?.id]);
   
   const nodeClassName = (node: Node) => node.type || 'default';
   
@@ -236,8 +249,8 @@ function ProjectCanvasFlow() {
     }
   };
 
-  // Show loading state
-  if (isLoading && currentProject) {
+  // Show loading overlay only during the initial load
+  if (currentProject && isLoading && !hasLoadedOnce) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-canvas-background">
         <Card className="max-w-lg mx-auto text-center">
