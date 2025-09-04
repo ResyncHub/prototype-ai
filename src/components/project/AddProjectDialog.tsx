@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { ProjectColorPicker } from "./ProjectColorPicker";
 import { Project } from "@/hooks/useProjects";
 
 interface AddProjectDialogProps {
@@ -15,10 +17,12 @@ interface AddProjectDialogProps {
 
 export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddProjectDialogProps) => {
   const [projectName, setProjectName] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [projectColor, setProjectColor] = useState("#DC2626");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = async () => {
+  const handleCreate = async () => {
     if (!projectName.trim()) {
       toast({
         title: "Error",
@@ -45,6 +49,9 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
         .from("projects")
         .insert({
           name: projectName.trim(),
+          description: projectDescription.trim() || null,
+          color: projectColor,
+          icon: 'FolderKanban',
           user_id: user.id,
         })
         .select()
@@ -59,6 +66,8 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
 
       onProjectCreated(data);
       setProjectName("");
+      setProjectDescription("");
+      setProjectColor("#DC2626");
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating project:", error);
@@ -82,21 +91,37 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
+          <div className="grid gap-2">
+            <Label htmlFor="name">Project Name</Label>
             <Input
               id="name"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
-              className="col-span-3"
               placeholder="Enter project name"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleSubmit();
+                  handleCreate();
                 }
               }}
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description (Optional)</Label>
+            <Textarea
+              id="description"
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value)}
+              placeholder="Brief description of your project"
+              rows={3}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Project Color</Label>
+            <ProjectColorPicker 
+              selectedColor={projectColor}
+              onColorChange={setProjectColor}
             />
           </div>
         </div>
@@ -104,7 +129,7 @@ export const AddProjectDialog = ({ open, onOpenChange, onProjectCreated }: AddPr
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isLoading}>
+          <Button onClick={handleCreate} disabled={isLoading}>
             {isLoading ? "Creating..." : "Create Project"}
           </Button>
         </DialogFooter>

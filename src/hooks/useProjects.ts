@@ -4,9 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 export interface Project {
   id: string;
   name: string;
+  description?: string;
+  color: string;
+  icon: string;
   user_id: string;
   created_at: string;
   updated_at: string;
+  last_accessed_at: string;
 }
 
 export const useProjects = () => {
@@ -29,7 +33,7 @@ export const useProjects = () => {
         .from('projects')
         .select('*')
         .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
+        .order('last_accessed_at', { ascending: false });
 
       if (error) throw error;
 
@@ -37,7 +41,7 @@ export const useProjects = () => {
       setError(null);
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Nie udało się pobrać projektów');
+      setError('Failed to fetch projects');
       setProjects([]);
     } finally {
       setLoading(false);

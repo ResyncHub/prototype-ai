@@ -24,9 +24,11 @@ import TaskNode from "./TaskNode";
 import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
+import { useProjectManagement } from "@/hooks/useProjectManagement";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FolderKanban, Plus } from "lucide-react";
+import { FolderKanban, Plus, ArrowRight } from "lucide-react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 const nodeTypes = {
   project: ProjectNode,
@@ -49,6 +51,7 @@ function ProjectCanvasFlow() {
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const { getNodes, getEdges } = useReactFlow();
   const { currentProject } = useProject();
+  const { updateLastAccessed } = useProjectManagement();
   
   const nodeClassName = (node: Node) => node.type || 'default';
   
@@ -114,6 +117,13 @@ function ProjectCanvasFlow() {
     // Context menu functionality can be added here
   }, []);
 
+  // Update last accessed when project is selected
+  useEffect(() => {
+    if (currentProject?.id) {
+      updateLastAccessed(currentProject.id);
+    }
+  }, [currentProject?.id, updateLastAccessed]);
+
 
   const getDefaultNodeData = (type: string) => {
     switch (type) {
@@ -147,15 +157,24 @@ function ProjectCanvasFlow() {
   if (!currentProject) {
     return (
       <div className="h-full w-full flex items-center justify-center bg-canvas-background">
-        <Card className="max-w-md mx-auto text-center">
-          <CardHeader className="pb-4">
-            <div className="mx-auto w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-4">
-              <FolderKanban className="h-6 w-6 text-muted-foreground" />
+        <Card className="max-w-lg mx-auto text-center shadow-lg">
+          <CardHeader className="pb-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <FolderKanban className="h-8 w-8 text-primary" />
             </div>
-            <CardTitle>No Project Selected</CardTitle>
-            <CardDescription className="text-base">
-              Select a project from the sidebar to start working on your canvas, or create a new project to get started.
+            <CardTitle className="text-2xl mb-2">Welcome to Your Workspace</CardTitle>
+            <CardDescription className="text-base leading-relaxed mb-6">
+              Create your first project to start building amazing things. Projects help you organize your work and collaborate with your team.
             </CardDescription>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Plus className="h-5 w-5 mr-2" />
+                Create Your First Project
+              </Button>
+              <Button variant="outline" size="lg">
+                Learn More
+              </Button>
+            </div>
           </CardHeader>
         </Card>
       </div>
@@ -163,7 +182,35 @@ function ProjectCanvasFlow() {
   }
 
   return (
-    <div className="h-full w-full relative">
+    <div className="h-full w-full relative flex flex-col">
+      {/* Breadcrumb Navigation */}
+      <div className="border-b border-border bg-background px-4 py-2">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="text-muted-foreground hover:text-foreground">
+                Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span className="flex items-center gap-2 font-medium">
+                <div 
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: currentProject.color }}
+                />
+                {currentProject.name}
+              </span>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <span className="text-muted-foreground">Canvas</span>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
+      {/* Canvas Toolbar */}
       <CanvasToolbar 
         onAddNode={addNewNode} 
         onClearCanvas={clearCanvas}
@@ -171,7 +218,8 @@ function ProjectCanvasFlow() {
         projectName={currentProject.name}
       />
       
-      <div className="h-full">
+      {/* React Flow Canvas */}
+      <div className="flex-1">
         <ReactFlow
           nodes={nodes}
           edges={edges}

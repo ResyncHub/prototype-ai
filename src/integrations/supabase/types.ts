@@ -40,22 +40,34 @@ export type Database = {
       }
       projects: {
         Row: {
+          color: string | null
           created_at: string
+          description: string | null
+          icon: string | null
           id: string
+          last_accessed_at: string | null
           name: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
+          description?: string | null
+          icon?: string | null
           id?: string
+          last_accessed_at?: string | null
           name: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          color?: string | null
           created_at?: string
+          description?: string | null
+          icon?: string | null
           id?: string
+          last_accessed_at?: string | null
           name?: string
           updated_at?: string
           user_id?: string
