@@ -248,7 +248,6 @@ function ProjectCanvasFlow() {
         onAddNode={addNewNode} 
         onClearCanvas={clearCanvas}
         selectedCount={selectedNodes.length + selectedEdges.length}
-        projectName={currentProject.name}
       />
       
       {/* React Flow Canvas */}
