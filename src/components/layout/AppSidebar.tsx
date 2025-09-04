@@ -218,15 +218,15 @@ export function AppSidebar() {
                             <SidebarMenuSubItem key={project.id}>
                               <div
                                 className={cn(
-                                  "group flex items-center justify-between min-h-[44px] rounded-md",
+                                  "group flex items-start justify-between min-h-[44px] py-1 rounded-md",
                                   currentProject?.id === project.id &&
                                     "bg-sidebar-accent text-sidebar-accent-foreground"
                                 )}
                               >
                                 <SidebarMenuSubButton
-                                  className="group/btn flex-1"
+                                  className="group/btn flex-1 h-auto py-2 items-start"
                                   onClick={() => handleProjectSelect(project)}
-                               >
+                                >
                                   <div className="flex items-center gap-2 min-w-0 flex-1">
                                     <div
                                       className="w-3 h-3 rounded-full flex-shrink-0"
