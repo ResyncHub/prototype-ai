@@ -1,11 +1,9 @@
-import { useCallback, useState, useEffect, useMemo } from "react";
+import { useCallback, useState, useEffect } from "react";
 import {
   ReactFlow,
   MiniMap,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
   addEdge,
   Connection,
   Edge,
@@ -25,10 +23,12 @@ import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
 import { useProjectManagement } from "@/hooks/useProjectManagement";
+import { useCanvasPersistence } from "@/hooks/useCanvasPersistence";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FolderKanban, Plus, ArrowRight } from "lucide-react";
+import { FolderKanban, Plus, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Badge } from "@/components/ui/badge";
 
 const nodeTypes = {
   project: ProjectNode,
@@ -45,13 +45,15 @@ const initialNodes: Node[] = [];
 const initialEdges: Edge[] = [];
 
 function ProjectCanvasFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
-  const { getNodes, getEdges } = useReactFlow();
+  const { setViewport } = useReactFlow();
   const { currentProject } = useProject();
   const { updateLastAccessed } = useProjectManagement();
+  
+  // Use canvas persistence hook
+  const { canvasState, updateCanvas, isLoading, saveStatus } = useCanvasPersistence(currentProject?.id || null);
+  const { nodes, edges } = canvasState;
   
   const nodeClassName = (node: Node) => node.type || 'default';
   
@@ -62,9 +64,10 @@ function ProjectCanvasFlow() {
         type: 'custom',
         style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
       };
-      setEdges((eds) => addEdge(edge, eds));
+      const newEdges = addEdge(edge, edges);
+      updateCanvas({ edges: newEdges });
     },
-    [setEdges],
+    [edges, updateCanvas],
   );
 
   const addNewNode = (type: 'project' | 'team' | 'task') => {
@@ -76,31 +79,30 @@ function ProjectCanvasFlow() {
       data: { ...getDefaultNodeData(type), isNew: true },
     };
     
-    setNodes((nds) => [...nds, newNode]);
+    updateCanvas({ nodes: [...nodes, newNode] });
   };
 
   const deleteSelectedNodes = useCallback(() => {
-    setNodes((nds) => nds.filter((node) => !selectedNodes.includes(node.id)));
-    setEdges((eds) => 
-      eds.filter((edge) => 
-        !selectedNodes.includes(edge.source) && 
-        !selectedNodes.includes(edge.target)
-      )
+    const newNodes = nodes.filter((node) => !selectedNodes.includes(node.id));
+    const newEdges = edges.filter((edge) => 
+      !selectedNodes.includes(edge.source) && 
+      !selectedNodes.includes(edge.target)
     );
+    updateCanvas({ nodes: newNodes, edges: newEdges });
     setSelectedNodes([]);
-  }, [selectedNodes, setNodes, setEdges]);
+  }, [selectedNodes, nodes, edges, updateCanvas]);
 
   const deleteSelectedEdges = useCallback(() => {
-    setEdges((eds) => eds.filter((edge) => !selectedEdges.includes(edge.id)));
+    const newEdges = edges.filter((edge) => !selectedEdges.includes(edge.id));
+    updateCanvas({ edges: newEdges });
     setSelectedEdges([]);
-  }, [selectedEdges, setEdges]);
+  }, [selectedEdges, edges, updateCanvas]);
 
   const clearCanvas = useCallback(() => {
-    setNodes([]);
-    setEdges([]);
+    updateCanvas({ nodes: [], edges: [] });
     setSelectedNodes([]);
     setSelectedEdges([]);
-  }, [setNodes, setEdges]);
+  }, [updateCanvas]);
 
   const onSelectionChange = useCallback((params: any) => {
     setSelectedNodes(params.nodes.map((node: Node) => node.id));
@@ -117,6 +119,35 @@ function ProjectCanvasFlow() {
     // Context menu functionality can be added here
   }, []);
 
+  // Handle node and edge changes
+  const onNodesChange = useCallback((changes: any) => {
+    // Apply changes to current nodes
+    const updatedNodes = nodes.map(node => {
+      const change = changes.find((c: any) => c.id === node.id);
+      if (!change) return node;
+      
+      switch (change.type) {
+        case 'position':
+          return change.position ? { ...node, position: change.position } : node;
+        case 'dimensions':
+          return change.dimensions ? { ...node, ...change.dimensions } : node;
+        case 'remove':
+          return null;
+        default:
+          return node;
+      }
+    }).filter(Boolean) as Node[];
+    
+    updateCanvas({ nodes: updatedNodes });
+  }, [nodes, updateCanvas]);
+
+  const onEdgesChange = useCallback((changes: any) => {
+    const updatedEdges = edges.filter(edge => 
+      !changes.some((c: any) => c.id === edge.id && c.type === 'remove')
+    );
+    updateCanvas({ edges: updatedEdges });
+  }, [edges, updateCanvas]);
+
   // Update last accessed when project is selected
   useEffect(() => {
     if (currentProject?.id) {
@@ -124,37 +155,11 @@ function ProjectCanvasFlow() {
     }
   }, [currentProject?.id, updateLastAccessed]);
 
-  // Persist canvas state per project in localStorage
-  const storageKey = useMemo(() => currentProject?.id ? `canvas:${currentProject.id}` : null, [currentProject?.id]);
-
+  // Clear selections when switching projects
   useEffect(() => {
-    if (!storageKey) return;
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setNodes(parsed.nodes || []);
-        setEdges(parsed.edges || []);
-      }
-      // Don't clear canvas if no saved state - keep existing nodes/edges
-    } catch (e) {
-      console.error('Failed to load canvas state', e);
-      // Don't clear canvas on error - keep existing state
-    }
-    // Only clear selections when switching projects
     setSelectedNodes([]);
     setSelectedEdges([]);
-  }, [storageKey, setNodes, setEdges]);
-
-  useEffect(() => {
-    if (!storageKey) return;
-    try {
-      const payload = JSON.stringify({ nodes, edges });
-      localStorage.setItem(storageKey, payload);
-    } catch (e) {
-      console.error('Failed to save canvas state', e);
-    }
-  }, [nodes, edges, storageKey]);
+  }, [currentProject?.id]);
 
   const getDefaultNodeData = (type: string) => {
     switch (type) {
@@ -183,6 +188,25 @@ function ProjectCanvasFlow() {
         return {};
     }
   };
+
+  // Show loading state
+  if (isLoading && currentProject) {
+    return (
+      <div className="h-full w-full flex items-center justify-center bg-canvas-background">
+        <Card className="max-w-lg mx-auto text-center">
+          <CardHeader className="pb-6">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+            <CardTitle className="text-xl mb-2">Loading Canvas</CardTitle>
+            <CardDescription>
+              Loading your project canvas...
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   // Show empty state if no project is selected
   if (!currentProject) {
@@ -216,29 +240,58 @@ function ProjectCanvasFlow() {
     <div className="h-full w-full relative flex flex-col">
       {/* Breadcrumb Navigation */}
       <div className="border-b border-border bg-background px-4 py-2">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/" className="text-muted-foreground hover:text-foreground">
-                Home
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <span className="flex items-center gap-2 font-medium">
-                <div 
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: currentProject.color }}
-                />
-                {currentProject.name}
-              </span>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <span className="text-muted-foreground">Canvas</span>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <div className="flex items-center justify-between">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/" className="text-muted-foreground hover:text-foreground">
+                  Home
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <span className="flex items-center gap-2 font-medium">
+                  <div 
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: currentProject.color }}
+                  />
+                  {currentProject.name}
+                </span>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <span className="text-muted-foreground">Canvas</span>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          
+          {/* Save Status Indicator */}
+          <div className="flex items-center gap-2">
+            {saveStatus.isSaving && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Saving...
+              </Badge>
+            )}
+            {saveStatus.lastSaved && !saveStatus.isSaving && !saveStatus.hasUnsavedChanges && (
+              <Badge variant="default" className="flex items-center gap-1">
+                <CheckCircle className="h-3 w-3" />
+                All changes saved
+              </Badge>
+            )}
+            {saveStatus.error && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <AlertCircle className="h-3 w-3" />
+                Save failed
+              </Badge>
+            )}
+            {saveStatus.hasUnsavedChanges && !saveStatus.isSaving && (
+              <Badge variant="outline" className="flex items-center gap-1">
+                Unsaved changes
+              </Badge>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* React Flow Canvas */}
