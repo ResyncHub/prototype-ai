@@ -70,15 +70,16 @@ export function useCanvasPersistence(projectId: string | null) {
   const lastSavedStateRef = useRef<string>('');
 
   // Manual save function (no auto-save)
-  const manualSave = useCallback(async (state?: CanvasState) => {
+  const manualSave = useCallback(async (state?: CanvasState, targetProjectId?: string) => {
     const stateToSave = state || canvasState;
+    const pid = targetProjectId ?? projectId;
     
-    if (!projectId) {
+    if (!pid) {
       console.log('DEBUG: No projectId, skipping save');
       return false;
     }
 
-    console.log('DEBUG: Manual save for project:', projectId);
+    console.log('DEBUG: Manual save for project:', pid);
 
     const normalized = normalizeIds(stateToSave);
     const stateToPersist = normalized.state;
@@ -99,9 +100,8 @@ export function useCanvasPersistence(projectId: string | null) {
     try {
       console.log('DEBUG: Attempting to save canvas data...');
       
-      // Save canvas state - ensure single row per project by delete-then-insert
       const canvasUpsertData = {
-        project_id: projectId,
+        project_id: pid,
         canvas_data: {
           nodes: stateToPersist.nodes,
           edges: stateToPersist.edges,
@@ -110,97 +110,118 @@ export function useCanvasPersistence(projectId: string | null) {
       };
       console.log('DEBUG: Canvas upsert data:', canvasUpsertData);
 
-      const { error: canvasError } = await (supabase as any)
+      // Update-or-insert without relying on UNIQUE(project_id)
+      const { data: existing, error: existingErr } = await (supabase as any)
         .from('project_canvas')
-        .upsert(canvasUpsertData, { onConflict: 'project_id' });
+        .select('id')
+        .eq('project_id', pid)
+        .limit(1);
+
+      if (existingErr) throw existingErr;
+
+      let canvasError = null as any;
+      if (Array.isArray(existing) && existing.length > 0) {
+        const { error: updateErr } = await (supabase as any)
+          .from('project_canvas')
+          .update({ canvas_data: canvasUpsertData.canvas_data, updated_at: new Date().toISOString() })
+          .eq('project_id', pid);
+        canvasError = updateErr;
+      } else {
+        const { error: insertErr } = await (supabase as any)
+          .from('project_canvas')
+          .insert(canvasUpsertData);
+        canvasError = insertErr;
+      }
 
       if (canvasError) {
-        console.error('DEBUG: Canvas insert error:', canvasError);
-        throw canvasError;
+        console.warn('DEBUG: Canvas upsert failed, falling back to delete+insert:', canvasError);
+        await (supabase as any).from('project_canvas').delete().eq('project_id', pid);
+        const { error: insertErr2 } = await (supabase as any).from('project_canvas').insert(canvasUpsertData);
+        if (insertErr2) throw insertErr2;
       }
       console.log('DEBUG: Canvas saved successfully');
 
-        // Save individual nodes
-        if (stateToPersist.nodes.length > 0) {
-          const nodeData = stateToPersist.nodes.map(node => ({
-            id: node.id,
-            project_id: projectId,
-            node_type: node.type || 'default',
-            position_x: Math.round(node.position.x),
-            position_y: Math.round(node.position.y),
-            width: node.width || 200,
-            height: node.height || 100,
-            content: node.data || {},
-            style: node.style || {}
-          }));
+      // Save individual nodes
+      if (stateToPersist.nodes.length > 0) {
+        const nodeData = stateToPersist.nodes.map(node => ({
+          id: node.id,
+          project_id: pid,
+          node_type: node.type || 'default',
+          position_x: Math.round(node.position.x),
+          position_y: Math.round(node.position.y),
+          width: node.width || 200,
+          height: node.height || 100,
+          content: node.data || {},
+          style: node.style || {}
+        }));
 
-          console.log('DEBUG: Node data to insert:', nodeData);
+        console.log('DEBUG: Node data to insert:', nodeData);
 
-          // Upsert nodes to avoid duplicates and reduce RLS issues
-          let { error: nodesError } = await (supabase as any)
+        // Upsert nodes to avoid duplicates and reduce RLS issues
+        let { error: nodesError } = await (supabase as any)
+          .from('project_nodes')
+          .upsert(nodeData, { onConflict: 'id' });
+
+        if (nodesError) {
+          console.error('DEBUG: Nodes upsert error, retrying with ignoreDuplicates:', nodesError);
+          const retryResult = await (supabase as any)
             .from('project_nodes')
-            .upsert(nodeData, { onConflict: 'id' });
-
-          if (nodesError) {
-            console.error('DEBUG: Nodes upsert error, retrying with ignoreDuplicates:', nodesError);
-            const retryResult = await (supabase as any)
-              .from('project_nodes')
-              .upsert(nodeData, { onConflict: 'id', ignoreDuplicates: true });
-            nodesError = retryResult.error;
-          }
-
-          if (nodesError) {
-            console.warn('DEBUG: Nodes upsert ultimately failed, continuing with canvas_data as source of truth:', nodesError);
-          } else {
-            console.log('DEBUG: Nodes upserted successfully');
-          }
-        } else {
-          // Clear all nodes if canvas is empty
-          const clearNodesResult = await (supabase as any)
-            .from('project_nodes')
-            .delete()
-            .eq('project_id', projectId);
-          console.log('DEBUG: Clear nodes result:', clearNodesResult);
+            .upsert(nodeData, { onConflict: 'id', ignoreDuplicates: true });
+          nodesError = retryResult.error;
         }
 
-        // Save connections
-        if (stateToPersist.edges.length > 0) {
-          const connectionData = stateToPersist.edges.map(edge => ({
-            id: edge.id,
-            project_id: projectId,
-            from_node_id: edge.source,
-            to_node_id: edge.target,
-            connection_type: edge.type || 'default'
-          }));
-
-          console.log('DEBUG: Connection data to insert:', connectionData);
-
-          // Upsert connections to avoid duplicates and reduce RLS issues
-          let { error: connectionsError } = await (supabase as any)
-            .from('project_connections')
-            .upsert(connectionData, { onConflict: 'id' });
-
-          if (connectionsError) {
-            console.error('DEBUG: Connections upsert error, retrying with ignoreDuplicates:', connectionsError);
-            const retryConn = await (supabase as any)
-              .from('project_connections')
-              .upsert(connectionData, { onConflict: 'id', ignoreDuplicates: true });
-            connectionsError = retryConn.error;
-          }
-
-          if (connectionsError) {
-            console.warn('DEBUG: Connections upsert ultimately failed, continuing with canvas_data as source of truth:', connectionsError);
-          } else {
-            console.log('DEBUG: Connections upserted successfully');
-          }
+        if (nodesError) {
+          console.warn('DEBUG: Nodes upsert ultimately failed, continuing with canvas_data as source of truth:', nodesError);
         } else {
-          // Clear all connections if no edges exist
-          const clearConnectionsResult = await (supabase as any)
-            .from('project_connections')
-            .delete()
-            .eq('project_id', projectId);
-          console.log('DEBUG: Clear connections result:', clearConnectionsResult);
+          console.log('DEBUG: Nodes upserted successfully');
         }
+      } else {
+        // Clear all nodes if canvas is empty
+        const clearNodesResult = await (supabase as any)
+          .from('project_nodes')
+          .delete()
+          .eq('project_id', pid);
+        console.log('DEBUG: Clear nodes result:', clearNodesResult);
+      }
+
+      // Save connections
+      if (stateToPersist.edges.length > 0) {
+        const connectionData = stateToPersist.edges.map(edge => ({
+          id: edge.id,
+          project_id: pid,
+          from_node_id: edge.source,
+          to_node_id: edge.target,
+          connection_type: edge.type || 'default'
+        }));
+
+        console.log('DEBUG: Connection data to insert:', connectionData);
+
+        // Upsert connections to avoid duplicates and reduce RLS issues
+        let { error: connectionsError } = await (supabase as any)
+          .from('project_connections')
+          .upsert(connectionData, { onConflict: 'id' });
+
+        if (connectionsError) {
+          console.error('DEBUG: Connections upsert error, retrying with ignoreDuplicates:', connectionsError);
+          const retryConn = await (supabase as any)
+            .from('project_connections')
+            .upsert(connectionData, { onConflict: 'id', ignoreDuplicates: true });
+          connectionsError = retryConn.error;
+        }
+
+        if (connectionsError) {
+          console.warn('DEBUG: Connections upsert ultimately failed, continuing with canvas_data as source of truth:', connectionsError);
+        } else {
+          console.log('DEBUG: Connections upserted successfully');
+        }
+      } else {
+        // Clear all connections if no edges exist
+        const clearConnectionsResult = await (supabase as any)
+          .from('project_connections')
+          .delete()
+          .eq('project_id', pid);
+        console.log('DEBUG: Clear connections result:', clearConnectionsResult);
+      }
 
       lastSavedStateRef.current = stateJson;
       setSaveStatus({
@@ -387,8 +408,8 @@ export function useCanvasPersistence(projectId: string | null) {
   const previousProjectId = useRef<string | null>(null);
   useEffect(() => {
     if (previousProjectId.current && previousProjectId.current !== projectId && saveStatus.hasUnsavedChanges) {
-      console.log('DEBUG: Auto-saving before project switch');
-      manualSave();
+      console.log('DEBUG: Auto-saving before project switch', { from: previousProjectId.current, to: projectId });
+      manualSave(undefined, previousProjectId.current);
     }
     previousProjectId.current = projectId;
   }, [projectId, saveStatus.hasUnsavedChanges, manualSave]);
