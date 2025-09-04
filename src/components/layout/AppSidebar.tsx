@@ -47,7 +47,7 @@ export function AppSidebar() {
   const handleProjectSelect = async (project: any) => {
     setCurrentProject(project);
     await updateLastAccessed(project.id);
-    refetch();
+    // Real-time subscription will automatically update the list
   };
 
   const handleProjectDuplicate = (newProject: any) => {
@@ -81,7 +81,7 @@ export function AppSidebar() {
       onMouseLeave={(e) => {
         const next = e.relatedTarget as HTMLElement | null;
         // Don't collapse when moving into Radix dropdown content
-        if (next && next.closest('[data-radix-popper-content-wrapper]')) return;
+        if (next && next instanceof HTMLElement && next.closest('[data-radix-popper-content-wrapper]')) return;
         setOpen(false);
       }}
     >
