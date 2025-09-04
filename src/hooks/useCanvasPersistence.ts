@@ -69,69 +69,62 @@ export function useCanvasPersistence(projectId: string | null) {
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   const lastSavedStateRef = useRef<string>('');
 
-  // Debounced save function
-  const debouncedSave = useCallback(async (state: CanvasState) => {
+  // Manual save function (no auto-save)
+  const manualSave = useCallback(async (state?: CanvasState) => {
+    const stateToSave = state || canvasState;
+    
     if (!projectId) {
       console.log('DEBUG: No projectId, skipping save');
-      return;
+      return false;
     }
 
-    console.log('DEBUG: Starting save for project:', projectId);
-    console.log('DEBUG: Canvas state to save:', state);
+    console.log('DEBUG: Manual save for project:', projectId);
 
-    const normalized = normalizeIds(state);
+    const normalized = normalizeIds(stateToSave);
     const stateToPersist = normalized.state;
     const stateJson = JSON.stringify(stateToPersist);
-    
-    console.log('DEBUG: Normalized state:', stateToPersist);
-    console.log('DEBUG: IDs changed during normalization:', normalized.changed);
     
     if (normalized.changed) {
       setCanvasState(stateToPersist);
     }
+    
     if (stateJson === lastSavedStateRef.current) {
-      console.log('DEBUG: State unchanged, skipping save');
-      return;
+      console.log('DEBUG: No changes to save');
+      setSaveStatus(prev => ({ ...prev, hasUnsavedChanges: false }));
+      return true;
     }
 
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
+    setSaveStatus(prev => ({ ...prev, isSaving: true, error: null }));
 
-    // Set new timeout for debounced save
-    saveTimeoutRef.current = setTimeout(async () => {
-      setSaveStatus(prev => ({ ...prev, isSaving: true, error: null }));
+    try {
+      console.log('DEBUG: Attempting to save canvas data...');
+      
+      // Save canvas state - ensure single row per project by delete-then-insert
+      const canvasDeleteResult = await (supabase as any)
+        .from('project_canvas')
+        .delete()
+        .eq('project_id', projectId);
+      console.log('DEBUG: Canvas delete result:', canvasDeleteResult);
 
-      try {
-        console.log('DEBUG: Attempting to save canvas data...');
-        
-        // Save canvas state - ensure single row per project by delete-then-insert
-        const canvasDeleteResult = await (supabase as any)
-          .from('project_canvas')
-          .delete()
-          .eq('project_id', projectId);
-        console.log('DEBUG: Canvas delete result:', canvasDeleteResult);
-
-        const canvasInsertData = {
-          project_id: projectId,
-          canvas_data: {
-            nodes: stateToPersist.nodes,
-            edges: stateToPersist.edges,
-            viewport: stateToPersist.viewport
-          }
-        };
-        console.log('DEBUG: Canvas insert data:', canvasInsertData);
-
-        const { error: canvasError } = await (supabase as any)
-          .from('project_canvas')
-          .insert(canvasInsertData);
-
-        if (canvasError) {
-          console.error('DEBUG: Canvas insert error:', canvasError);
-          throw canvasError;
+      const canvasInsertData = {
+        project_id: projectId,
+        canvas_data: {
+          nodes: stateToPersist.nodes,
+          edges: stateToPersist.edges,
+          viewport: stateToPersist.viewport
         }
-        console.log('DEBUG: Canvas saved successfully');
+      };
+      console.log('DEBUG: Canvas insert data:', canvasInsertData);
+
+      const { error: canvasError } = await (supabase as any)
+        .from('project_canvas')
+        .insert(canvasInsertData);
+
+      if (canvasError) {
+        console.error('DEBUG: Canvas insert error:', canvasError);
+        throw canvasError;
+      }
+      console.log('DEBUG: Canvas saved successfully');
 
         // Save individual nodes
         if (stateToPersist.nodes.length > 0) {
@@ -211,30 +204,38 @@ export function useCanvasPersistence(projectId: string | null) {
           console.log('DEBUG: Clear connections result:', clearConnectionsResult);
         }
 
-        lastSavedStateRef.current = stateJson;
-        setSaveStatus({
-          isSaving: false,
-          lastSaved: new Date(),
-          hasUnsavedChanges: false,
-          error: null
-        });
+      lastSavedStateRef.current = stateJson;
+      setSaveStatus({
+        isSaving: false,
+        lastSaved: new Date(),
+        hasUnsavedChanges: false,
+        error: null
+      });
 
-      } catch (error) {
-        console.error('Failed to save canvas:', error);
-        setSaveStatus(prev => ({
-          ...prev,
-          isSaving: false,
-          error: error instanceof Error ? error.message : 'Failed to save canvas'
-        }));
-        
-        toast({
-          title: "Save Error",
-          description: "Failed to save canvas changes. Please try again.",
-          variant: "destructive"
-        });
-      }
-    }, 2000); // 2 second debounce
-  }, [projectId, toast]);
+      toast({
+        title: "Canvas Saved",
+        description: "All changes have been saved successfully.",
+      });
+
+      return true;
+
+    } catch (error) {
+      console.error('Failed to save canvas:', error);
+      setSaveStatus(prev => ({
+        ...prev,
+        isSaving: false,
+        error: error instanceof Error ? error.message : 'Failed to save canvas'
+      }));
+      
+      toast({
+        title: "Save Error",
+        description: "Failed to save canvas changes. Please try again.",
+        variant: "destructive"
+      });
+      
+      return false;
+    }
+  }, [projectId, canvasState, toast]);
 
   // Load canvas state from Supabase
   const loadCanvas = useCallback(async (projectId: string) => {
@@ -343,15 +344,17 @@ export function useCanvasPersistence(projectId: string | null) {
     }
   }, [toast]);
 
-  // Update canvas state and trigger save
+  // Update canvas state (local only, no auto-save)
   const updateCanvas = useCallback((updates: Partial<CanvasState>) => {
     setCanvasState(prev => {
       const newState = { ...prev, ...updates };
-      setSaveStatus(prevStatus => ({ ...prevStatus, hasUnsavedChanges: true }));
-      debouncedSave(newState);
+      setSaveStatus(prevStatus => ({ 
+        ...prevStatus, 
+        hasUnsavedChanges: JSON.stringify(newState) !== lastSavedStateRef.current 
+      }));
       return newState;
     });
-  }, [debouncedSave]);
+  }, []);
 
   // Load canvas when project changes
   useEffect(() => {
@@ -377,9 +380,34 @@ export function useCanvasPersistence(projectId: string | null) {
     };
   }, []);
 
+  // Auto-save when switching projects (safety feature)
+  const previousProjectId = useRef<string | null>(null);
+  useEffect(() => {
+    if (previousProjectId.current && previousProjectId.current !== projectId && saveStatus.hasUnsavedChanges) {
+      console.log('DEBUG: Auto-saving before project switch');
+      manualSave();
+    }
+    previousProjectId.current = projectId;
+  }, [projectId, saveStatus.hasUnsavedChanges, manualSave]);
+
+  // Warn before closing with unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (saveStatus.hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [saveStatus.hasUnsavedChanges]);
+
   return {
     canvasState,
     updateCanvas,
+    manualSave,
     isLoading,
     saveStatus,
     loadCanvas: () => projectId ? loadCanvas(projectId) : Promise.resolve()
