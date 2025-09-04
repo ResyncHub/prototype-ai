@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -124,6 +124,39 @@ function ProjectCanvasFlow() {
     }
   }, [currentProject?.id, updateLastAccessed]);
 
+  // Persist canvas state per project in localStorage
+  const storageKey = useMemo(() => currentProject?.id ? `canvas:${currentProject.id}` : null, [currentProject?.id]);
+
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setNodes(parsed.nodes || []);
+        setEdges(parsed.edges || []);
+      } else {
+        setNodes([]);
+        setEdges([]);
+      }
+    } catch (e) {
+      console.error('Failed to load canvas state', e);
+      setNodes([]);
+      setEdges([]);
+    }
+    setSelectedNodes([]);
+    setSelectedEdges([]);
+  }, [storageKey, setNodes, setEdges]);
+
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      const payload = JSON.stringify({ nodes, edges });
+      localStorage.setItem(storageKey, payload);
+    } catch (e) {
+      console.error('Failed to save canvas state', e);
+    }
+  }, [nodes, edges, storageKey]);
 
   const getDefaultNodeData = (type: string) => {
     switch (type) {
