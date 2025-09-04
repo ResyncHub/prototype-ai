@@ -344,16 +344,14 @@ export function useCanvasPersistence(projectId: string | null) {
     }
   }, [toast]);
 
-  // Update canvas state (local only, no auto-save)
+  // Update canvas state (local only, no auto-save, optimized for performance)
   const updateCanvas = useCallback((updates: Partial<CanvasState>) => {
-    setCanvasState(prev => {
-      const newState = { ...prev, ...updates };
-      setSaveStatus(prevStatus => ({ 
-        ...prevStatus, 
-        hasUnsavedChanges: JSON.stringify(newState) !== lastSavedStateRef.current 
-      }));
-      return newState;
-    });
+    setCanvasState(prev => ({ ...prev, ...updates }));
+    // Only check for unsaved changes, don't stringify during drag operations
+    setSaveStatus(prevStatus => ({ 
+      ...prevStatus, 
+      hasUnsavedChanges: true
+    }));
   }, []);
 
   // Load canvas when project changes

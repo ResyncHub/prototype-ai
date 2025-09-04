@@ -17,6 +17,7 @@ import {
   EdgeMouseHandler,
   type NodeChange,
   type EdgeChange,
+  ConnectionMode,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -62,12 +63,20 @@ function ProjectCanvasFlow() {
   const { canvasState, updateCanvas, manualSave, saveStatus, isLoading } = useCanvasPersistence(currentProject?.id || null);
   const { nodes, edges } = canvasState;
 
-  // Mark initial load complete once first lazy load finishes
+  // Mark initial load complete once first lazy load finishes + auto-fit
   useEffect(() => {
-    if (!isLoading && currentProject) {
+    if (!isLoading && currentProject && !hasFitted && nodes.length > 0) {
       setHasLoadedOnce(true);
+      setHasFitted(true);
+      // Fit view to show all nodes after loading
+      setTimeout(() => {
+        fitView({ padding: 0.2, duration: 800 });
+      }, 100);
+    } else if (!isLoading && currentProject && !hasFitted) {
+      setHasLoadedOnce(true);
+      setHasFitted(true);
     }
-  }, [isLoading, currentProject]);
+  }, [isLoading, currentProject, hasFitted, nodes.length, fitView]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -339,6 +348,7 @@ function ProjectCanvasFlow() {
         />
         
         <ReactFlow
+          ref={containerRef}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
@@ -349,7 +359,6 @@ function ProjectCanvasFlow() {
           onEdgeContextMenu={onEdgeContextMenu}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
-          fitView
           className="bg-canvas-background"
           defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
           minZoom={0.1}
@@ -362,6 +371,7 @@ function ProjectCanvasFlow() {
           zoomOnDoubleClick={true}
           zoomOnScroll={true}
           zoomOnPinch={true}
+          connectOnClick={false}
         >
           <Background 
             variant={BackgroundVariant.Dots}
