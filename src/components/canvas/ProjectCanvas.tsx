@@ -135,15 +135,13 @@ function ProjectCanvasFlow() {
         const parsed = JSON.parse(raw);
         setNodes(parsed.nodes || []);
         setEdges(parsed.edges || []);
-      } else {
-        setNodes([]);
-        setEdges([]);
       }
+      // Don't clear canvas if no saved state - keep existing nodes/edges
     } catch (e) {
       console.error('Failed to load canvas state', e);
-      setNodes([]);
-      setEdges([]);
+      // Don't clear canvas on error - keep existing state
     }
+    // Only clear selections when switching projects
     setSelectedNodes([]);
     setSelectedEdges([]);
   }, [storageKey, setNodes, setEdges]);
