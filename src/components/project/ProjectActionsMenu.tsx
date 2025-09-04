@@ -64,6 +64,10 @@ export const ProjectActionsMenu = ({
             size="icon" 
             className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setOpen(true);
+            }}
           >
             <MoreVertical className="h-4 w-4" />
           </Button>
@@ -71,10 +75,10 @@ export const ProjectActionsMenu = ({
         <DropdownMenuContent 
           side="right"
           align="start"
-          sideOffset={6}
+          sideOffset={8}
           alignOffset={0}
-          avoidCollisions={false}
-          className="w-48 bg-popover border border-border"
+          collisionPadding={8}
+          className="w-48 bg-popover border border-border z-50"
         >
           <DropdownMenuItem onClick={onEdit}>
             <Edit3 className="mr-2 h-4 w-4" />
