@@ -243,15 +243,15 @@ function ProjectCanvasFlow() {
         </Breadcrumb>
       </div>
 
-      {/* Canvas Toolbar */}
-      <CanvasToolbar 
-        onAddNode={addNewNode} 
-        onClearCanvas={clearCanvas}
-        selectedCount={selectedNodes.length + selectedEdges.length}
-      />
-      
       {/* React Flow Canvas */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
+        {/* Canvas Toolbar */}
+        <CanvasToolbar 
+          onAddNode={addNewNode} 
+          onClearCanvas={clearCanvas}
+          selectedCount={selectedNodes.length + selectedEdges.length}
+        />
+        
         <ReactFlow
           nodes={nodes}
           edges={edges}
