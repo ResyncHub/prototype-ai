@@ -54,7 +54,7 @@ export function TopNavigation() {
 
   return (
     <>
-      <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4 font-prototype">
+      <div className="h-12 bg-white border-b border-gray-200 flex items-center justify-between px-4 font-prototype relative z-50">
         {/* Left Section */}
         <div className="flex items-center gap-4">
           {/* Logo */}
