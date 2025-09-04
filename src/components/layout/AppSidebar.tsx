@@ -211,34 +211,41 @@ export function AppSidebar() {
                         <>
                           {displayProjects.map((project) => (
                             <SidebarMenuSubItem key={project.id}>
-                              <SidebarMenuSubButton 
+                              <div
                                 className={cn(
-                                  "group-data-[collapsible=icon]:hidden group justify-between min-h-[44px]",
-                                  currentProject?.id === project.id && "bg-sidebar-accent text-sidebar-accent-foreground"
+                                  "group flex items-center justify-between min-h-[44px] rounded-md",
+                                  currentProject?.id === project.id &&
+                                    "bg-sidebar-accent text-sidebar-accent-foreground"
                                 )}
-                                onClick={() => handleProjectSelect(project)}
                               >
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                  <div 
-                                    className="w-3 h-3 rounded-full flex-shrink-0"
-                                    style={{ backgroundColor: project.color }}
-                                  />
-                                  <div className="flex flex-col min-w-0 flex-1">
-                                    <span className="truncate font-medium">{project.name}</span>
-                                    {project.description && (
-                                      <span className="text-xs text-muted-foreground truncate">
-                                        {project.description}
-                                      </span>
-                                    )}
+                                <SidebarMenuSubButton
+                                  className="group/btn flex-1"
+                                  onClick={() => handleProjectSelect(project)}
+                               >
+                                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                                    <div
+                                      className="w-3 h-3 rounded-full flex-shrink-0"
+                                      style={{ backgroundColor: project.color }}
+                                    />
+                                    <div className="flex flex-col min-w-0 flex-1">
+                                      <span className="truncate font-medium">{project.name}</span>
+                                      {project.description && (
+                                        <span className="text-xs text-muted-foreground truncate">
+                                          {project.description}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
+                                </SidebarMenuSubButton>
+                                <div className="pr-1">
+                                  <ProjectActionsMenu
+                                    project={project}
+                                    onEdit={() => setSettingsOpen(true)}
+                                    onDelete={() => handleProjectDeleted(project.id)}
+                                    onDuplicate={handleProjectDuplicate}
+                                  />
                                 </div>
-                                <ProjectActionsMenu
-                                  project={project}
-                                  onEdit={() => setSettingsOpen(true)}
-                                  onDelete={() => handleProjectDeleted(project.id)}
-                                  onDuplicate={handleProjectDuplicate}
-                                />
-                              </SidebarMenuSubButton>
+                              </div>
                             </SidebarMenuSubItem>
                           ))}
                         </>

@@ -67,7 +67,9 @@ export const ProjectActionsMenu = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
-          align="start" 
+          side="right"
+          align="end" 
+          sideOffset={6}
           className="w-48 bg-popover border border-border z-40"
         >
           <DropdownMenuItem onClick={onEdit}>
