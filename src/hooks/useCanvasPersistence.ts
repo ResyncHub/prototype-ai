@@ -100,13 +100,7 @@ export function useCanvasPersistence(projectId: string | null) {
       console.log('DEBUG: Attempting to save canvas data...');
       
       // Save canvas state - ensure single row per project by delete-then-insert
-      const canvasDeleteResult = await (supabase as any)
-        .from('project_canvas')
-        .delete()
-        .eq('project_id', projectId);
-      console.log('DEBUG: Canvas delete result:', canvasDeleteResult);
-
-      const canvasInsertData = {
+      const canvasUpsertData = {
         project_id: projectId,
         canvas_data: {
           nodes: stateToPersist.nodes,
@@ -114,11 +108,11 @@ export function useCanvasPersistence(projectId: string | null) {
           viewport: stateToPersist.viewport
         }
       };
-      console.log('DEBUG: Canvas insert data:', canvasInsertData);
+      console.log('DEBUG: Canvas upsert data:', canvasUpsertData);
 
       const { error: canvasError } = await (supabase as any)
         .from('project_canvas')
-        .insert(canvasInsertData);
+        .upsert(canvasUpsertData, { onConflict: 'project_id' });
 
       if (canvasError) {
         console.error('DEBUG: Canvas insert error:', canvasError);
@@ -142,22 +136,24 @@ export function useCanvasPersistence(projectId: string | null) {
 
           console.log('DEBUG: Node data to insert:', nodeData);
 
-          // Delete existing nodes for this project, then insert new ones
-          const nodesDeleteResult = await (supabase as any)
+          // Upsert nodes to avoid duplicates and reduce RLS issues
+          let { error: nodesError } = await (supabase as any)
             .from('project_nodes')
-            .delete()
-            .eq('project_id', projectId);
-          console.log('DEBUG: Nodes delete result:', nodesDeleteResult);
-
-          const { error: nodesError } = await (supabase as any)
-            .from('project_nodes')
-            .insert(nodeData);
+            .upsert(nodeData, { onConflict: 'id' });
 
           if (nodesError) {
-            console.error('DEBUG: Nodes insert error:', nodesError);
-            throw nodesError;
+            console.error('DEBUG: Nodes upsert error, retrying with ignoreDuplicates:', nodesError);
+            const retryResult = await (supabase as any)
+              .from('project_nodes')
+              .upsert(nodeData, { onConflict: 'id', ignoreDuplicates: true });
+            nodesError = retryResult.error;
           }
-          console.log('DEBUG: Nodes saved successfully');
+
+          if (nodesError) {
+            console.warn('DEBUG: Nodes upsert ultimately failed, continuing with canvas_data as source of truth:', nodesError);
+          } else {
+            console.log('DEBUG: Nodes upserted successfully');
+          }
         } else {
           // Clear all nodes if canvas is empty
           const clearNodesResult = await (supabase as any)
@@ -179,22 +175,24 @@ export function useCanvasPersistence(projectId: string | null) {
 
           console.log('DEBUG: Connection data to insert:', connectionData);
 
-          // Delete existing connections for this project, then insert new ones
-          const connectionsDeleteResult = await (supabase as any)
+          // Upsert connections to avoid duplicates and reduce RLS issues
+          let { error: connectionsError } = await (supabase as any)
             .from('project_connections')
-            .delete()
-            .eq('project_id', projectId);
-          console.log('DEBUG: Connections delete result:', connectionsDeleteResult);
-
-          const { error: connectionsError } = await (supabase as any)
-            .from('project_connections')
-            .insert(connectionData);
+            .upsert(connectionData, { onConflict: 'id' });
 
           if (connectionsError) {
-            console.error('DEBUG: Connections insert error:', connectionsError);
-            throw connectionsError;
+            console.error('DEBUG: Connections upsert error, retrying with ignoreDuplicates:', connectionsError);
+            const retryConn = await (supabase as any)
+              .from('project_connections')
+              .upsert(connectionData, { onConflict: 'id', ignoreDuplicates: true });
+            connectionsError = retryConn.error;
           }
-          console.log('DEBUG: Connections saved successfully');
+
+          if (connectionsError) {
+            console.warn('DEBUG: Connections upsert ultimately failed, continuing with canvas_data as source of truth:', connectionsError);
+          } else {
+            console.log('DEBUG: Connections upserted successfully');
+          }
         } else {
           // Clear all connections if no edges exist
           const clearConnectionsResult = await (supabase as any)
@@ -292,24 +290,31 @@ export function useCanvasPersistence(projectId: string | null) {
       console.log('DEBUG: Connections result:', { connectionsData, connectionsError });
       if (connectionsError) throw connectionsError;
 
-      // Transform data back to React Flow format
-      const nodes: Node[] = (nodesData || []).map(node => ({
-        id: node.id,
-        type: node.node_type,
-        position: { x: node.position_x, y: node.position_y },
-        data: node.content || {},
-        style: node.style || {},
-        width: node.width || undefined,
-        height: node.height || undefined
-      }));
+      // Transform data back to React Flow format (prefer canvas_data if available)
+      const canvasNodes = canvasRecord?.canvas_data?.nodes as Node[] | undefined;
+      const canvasEdges = canvasRecord?.canvas_data?.edges as Edge[] | undefined;
 
-      const edges: Edge[] = (connectionsData || []).map(connection => ({
-        id: connection.id,
-        source: connection.from_node_id,
-        target: connection.to_node_id,
-        type: connection.connection_type || 'custom',
-        style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 }
-      }));
+      const nodes: Node[] = Array.isArray(canvasNodes) && canvasNodes.length > 0
+        ? canvasNodes
+        : (nodesData || []).map((node: any) => ({
+            id: node.id,
+            type: node.node_type,
+            position: { x: node.position_x, y: node.position_y },
+            data: node.content || {},
+            style: node.style || {},
+            width: node.width || undefined,
+            height: node.height || undefined
+          }));
+
+      const edges: Edge[] = Array.isArray(canvasEdges) && canvasEdges.length > 0
+        ? canvasEdges
+        : (connectionsData || []).map((connection: any) => ({
+            id: connection.id,
+            source: connection.from_node_id,
+            target: connection.to_node_id,
+            type: connection.connection_type || 'custom',
+            style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 }
+          }));
 
       const viewport = canvasRecord?.canvas_data?.viewport || { x: 0, y: 0, zoom: 0.8 };
 
