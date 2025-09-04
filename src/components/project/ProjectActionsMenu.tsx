@@ -70,9 +70,11 @@ export const ProjectActionsMenu = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           side="right"
-          align="start" 
+          align="start"
           sideOffset={6}
-          className="w-48 bg-popover border border-border z-40"
+          alignOffset={0}
+          avoidCollisions={false}
+          className="w-48 bg-popover border border-border"
         >
           <DropdownMenuItem onClick={onEdit}>
             <Edit3 className="mr-2 h-4 w-4" />
