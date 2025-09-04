@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, useSidebar, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
-import { FolderKanban, Plus, Settings, ChevronRight, FileText, Loader2, Clock, Search } from "lucide-react";
+import { FolderKanban, Plus, Settings, ChevronRight, FileText, Loader2, Clock, Search, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddProjectDialog } from "@/components/project/AddProjectDialog";
@@ -238,6 +238,18 @@ export function AppSidebar() {
                                     </div>
                                   </div>
                                 </SidebarMenuSubButton>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 hover:bg-sidebar-accent"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCurrentProject(project);
+                                    setSettingsOpen(true);
+                                  }}
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
                               </div>
                             </SidebarMenuSubItem>
                           ))}
