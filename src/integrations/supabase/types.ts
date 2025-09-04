@@ -38,6 +38,137 @@ export type Database = {
         }
         Relationships: []
       }
+      project_canvas: {
+        Row: {
+          canvas_data: Json
+          created_at: string | null
+          id: string
+          project_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          canvas_data: Json
+          created_at?: string | null
+          id?: string
+          project_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          canvas_data?: Json
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_canvas_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_connections: {
+        Row: {
+          connection_type: string | null
+          created_at: string | null
+          from_node_id: string
+          id: string
+          project_id: string
+          to_node_id: string
+        }
+        Insert: {
+          connection_type?: string | null
+          created_at?: string | null
+          from_node_id: string
+          id?: string
+          project_id: string
+          to_node_id: string
+        }
+        Update: {
+          connection_type?: string | null
+          created_at?: string | null
+          from_node_id?: string
+          id?: string
+          project_id?: string
+          to_node_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_connections_from_node_id_fkey"
+            columns: ["from_node_id"]
+            isOneToOne: false
+            referencedRelation: "project_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_connections_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_connections_to_node_id_fkey"
+            columns: ["to_node_id"]
+            isOneToOne: false
+            referencedRelation: "project_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_nodes: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          height: number | null
+          id: string
+          node_type: string
+          position_x: number
+          position_y: number
+          project_id: string
+          style: Json | null
+          updated_at: string | null
+          width: number | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          height?: number | null
+          id?: string
+          node_type: string
+          position_x: number
+          position_y: number
+          project_id: string
+          style?: Json | null
+          updated_at?: string | null
+          width?: number | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          height?: number | null
+          id?: string
+          node_type?: string
+          position_x?: number
+          position_y?: number
+          project_id?: string
+          style?: Json | null
+          updated_at?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_nodes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           color: string | null
