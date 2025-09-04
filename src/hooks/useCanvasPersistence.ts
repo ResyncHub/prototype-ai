@@ -71,15 +71,28 @@ export function useCanvasPersistence(projectId: string | null) {
 
   // Debounced save function
   const debouncedSave = useCallback(async (state: CanvasState) => {
-    if (!projectId) return;
+    if (!projectId) {
+      console.log('DEBUG: No projectId, skipping save');
+      return;
+    }
+
+    console.log('DEBUG: Starting save for project:', projectId);
+    console.log('DEBUG: Canvas state to save:', state);
 
     const normalized = normalizeIds(state);
     const stateToPersist = normalized.state;
     const stateJson = JSON.stringify(stateToPersist);
+    
+    console.log('DEBUG: Normalized state:', stateToPersist);
+    console.log('DEBUG: IDs changed during normalization:', normalized.changed);
+    
     if (normalized.changed) {
       setCanvasState(stateToPersist);
     }
-    if (stateJson === lastSavedStateRef.current) return;
+    if (stateJson === lastSavedStateRef.current) {
+      console.log('DEBUG: State unchanged, skipping save');
+      return;
+    }
 
     // Clear existing timeout
     if (saveTimeoutRef.current) {
@@ -91,24 +104,34 @@ export function useCanvasPersistence(projectId: string | null) {
       setSaveStatus(prev => ({ ...prev, isSaving: true, error: null }));
 
       try {
+        console.log('DEBUG: Attempting to save canvas data...');
+        
         // Save canvas state - ensure single row per project by delete-then-insert
-        await (supabase as any)
+        const canvasDeleteResult = await (supabase as any)
           .from('project_canvas')
           .delete()
           .eq('project_id', projectId);
+        console.log('DEBUG: Canvas delete result:', canvasDeleteResult);
+
+        const canvasInsertData = {
+          project_id: projectId,
+          canvas_data: {
+            nodes: stateToPersist.nodes,
+            edges: stateToPersist.edges,
+            viewport: stateToPersist.viewport
+          }
+        };
+        console.log('DEBUG: Canvas insert data:', canvasInsertData);
 
         const { error: canvasError } = await (supabase as any)
           .from('project_canvas')
-          .insert({
-            project_id: projectId,
-            canvas_data: {
-              nodes: stateToPersist.nodes,
-              edges: stateToPersist.edges,
-              viewport: stateToPersist.viewport
-            }
-          });
+          .insert(canvasInsertData);
 
-        if (canvasError) throw canvasError;
+        if (canvasError) {
+          console.error('DEBUG: Canvas insert error:', canvasError);
+          throw canvasError;
+        }
+        console.log('DEBUG: Canvas saved successfully');
 
         // Save individual nodes
         if (stateToPersist.nodes.length > 0) {
@@ -124,23 +147,31 @@ export function useCanvasPersistence(projectId: string | null) {
             style: node.style || {}
           }));
 
+          console.log('DEBUG: Node data to insert:', nodeData);
+
           // Delete existing nodes for this project, then insert new ones
-          await (supabase as any)
+          const nodesDeleteResult = await (supabase as any)
             .from('project_nodes')
             .delete()
             .eq('project_id', projectId);
+          console.log('DEBUG: Nodes delete result:', nodesDeleteResult);
 
           const { error: nodesError } = await (supabase as any)
             .from('project_nodes')
             .insert(nodeData);
 
-          if (nodesError) throw nodesError;
+          if (nodesError) {
+            console.error('DEBUG: Nodes insert error:', nodesError);
+            throw nodesError;
+          }
+          console.log('DEBUG: Nodes saved successfully');
         } else {
           // Clear all nodes if canvas is empty
-          await (supabase as any)
+          const clearNodesResult = await (supabase as any)
             .from('project_nodes')
             .delete()
             .eq('project_id', projectId);
+          console.log('DEBUG: Clear nodes result:', clearNodesResult);
         }
 
         // Save connections
@@ -153,23 +184,31 @@ export function useCanvasPersistence(projectId: string | null) {
             connection_type: edge.type || 'default'
           }));
 
+          console.log('DEBUG: Connection data to insert:', connectionData);
+
           // Delete existing connections for this project, then insert new ones
-          await (supabase as any)
+          const connectionsDeleteResult = await (supabase as any)
             .from('project_connections')
             .delete()
             .eq('project_id', projectId);
+          console.log('DEBUG: Connections delete result:', connectionsDeleteResult);
 
           const { error: connectionsError } = await (supabase as any)
             .from('project_connections')
             .insert(connectionData);
 
-          if (connectionsError) throw connectionsError;
+          if (connectionsError) {
+            console.error('DEBUG: Connections insert error:', connectionsError);
+            throw connectionsError;
+          }
+          console.log('DEBUG: Connections saved successfully');
         } else {
           // Clear all connections if no edges exist
-          await (supabase as any)
+          const clearConnectionsResult = await (supabase as any)
             .from('project_connections')
             .delete()
             .eq('project_id', projectId);
+          console.log('DEBUG: Clear connections result:', clearConnectionsResult);
         }
 
         lastSavedStateRef.current = stateJson;
@@ -199,10 +238,13 @@ export function useCanvasPersistence(projectId: string | null) {
 
   // Load canvas state from Supabase
   const loadCanvas = useCallback(async (projectId: string) => {
+    console.log('DEBUG: Starting load for project:', projectId);
     setIsLoading(true);
     setSaveStatus(prev => ({ ...prev, error: null }));
 
     try {
+      console.log('DEBUG: Loading canvas data...');
+      
       // Load canvas data - using type assertion for tables not in current types
       const { data: canvasData1, error: canvasError1 } = await (supabase as any)
         .from('project_canvas')
@@ -210,33 +252,43 @@ export function useCanvasPersistence(projectId: string | null) {
         .eq('project_id', projectId)
         .maybeSingle();
 
+      console.log('DEBUG: Canvas data1 result:', { canvasData1, canvasError1 });
+
       let canvasRecord = canvasData1;
       if (canvasError1 && (canvasError1 as any).code === 'PGRST116') {
+        console.log('DEBUG: Multiple canvas records found, fetching first one...');
         const { data: canvasList, error: canvasListError } = await (supabase as any)
           .from('project_canvas')
           .select('canvas_data')
           .eq('project_id', projectId)
           .limit(1);
+        console.log('DEBUG: Canvas list result:', { canvasList, canvasListError });
         if (canvasListError) throw canvasListError;
         canvasRecord = canvasList?.[0] ?? null;
       } else if (canvasError1) {
         throw canvasError1;
       }
 
+      console.log('DEBUG: Final canvas record:', canvasRecord);
+
       // Load individual nodes
+      console.log('DEBUG: Loading nodes...');
       const { data: nodesData, error: nodesError } = await (supabase as any)
         .from('project_nodes')
         .select('*')
         .eq('project_id', projectId);
 
+      console.log('DEBUG: Nodes result:', { nodesData, nodesError });
       if (nodesError) throw nodesError;
 
       // Load connections
+      console.log('DEBUG: Loading connections...');
       const { data: connectionsData, error: connectionsError } = await (supabase as any)
         .from('project_connections')
         .select('*')
         .eq('project_id', projectId);
 
+      console.log('DEBUG: Connections result:', { connectionsData, connectionsError });
       if (connectionsError) throw connectionsError;
 
       // Transform data back to React Flow format
