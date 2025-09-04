@@ -16,6 +16,40 @@ export interface SaveStatus {
   error: string | null;
 }
 
+// Helpers to ensure DB-friendly UUID ids for nodes and edges
+const isUuid = (v: string) => /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(v);
+
+function normalizeIds(state: CanvasState): { state: CanvasState; changed: boolean } {
+  const idMap = new Map<string, string>();
+  let changed = false;
+
+  const nodes = state.nodes.map((n) => {
+    let id = n.id;
+    if (!isUuid(id)) {
+      const newId = crypto.randomUUID();
+      idMap.set(id, newId);
+      id = newId;
+      changed = true;
+    }
+    return { ...n, id } as Node;
+  });
+
+  const edges = state.edges.map((e) => {
+    let id = e.id;
+    if (!isUuid(id)) {
+      id = crypto.randomUUID();
+      changed = true;
+    }
+    const source = idMap.get(e.source) ?? e.source;
+    const target = idMap.get(e.target) ?? e.target;
+    if (source !== e.source || target !== e.target) changed = true;
+    return { ...e, id, source, target } as Edge;
+  });
+
+  if (!changed) return { state, changed };
+  return { state: { ...state, nodes, edges }, changed };
+}
+
 export function useCanvasPersistence(projectId: string | null) {
   const [canvasState, setCanvasState] = useState<CanvasState>({
     nodes: [],
@@ -39,7 +73,12 @@ export function useCanvasPersistence(projectId: string | null) {
   const debouncedSave = useCallback(async (state: CanvasState) => {
     if (!projectId) return;
 
-    const stateJson = JSON.stringify(state);
+    const normalized = normalizeIds(state);
+    const stateToPersist = normalized.state;
+    const stateJson = JSON.stringify(stateToPersist);
+    if (normalized.changed) {
+      setCanvasState(stateToPersist);
+    }
     if (stateJson === lastSavedStateRef.current) return;
 
     // Clear existing timeout
@@ -52,23 +91,28 @@ export function useCanvasPersistence(projectId: string | null) {
       setSaveStatus(prev => ({ ...prev, isSaving: true, error: null }));
 
       try {
-        // Save canvas state - using type assertion for tables not in current types
+        // Save canvas state - ensure single row per project by delete-then-insert
+        await (supabase as any)
+          .from('project_canvas')
+          .delete()
+          .eq('project_id', projectId);
+
         const { error: canvasError } = await (supabase as any)
           .from('project_canvas')
-          .upsert({
+          .insert({
             project_id: projectId,
             canvas_data: {
-              nodes: state.nodes,
-              edges: state.edges,
-              viewport: state.viewport
+              nodes: stateToPersist.nodes,
+              edges: stateToPersist.edges,
+              viewport: stateToPersist.viewport
             }
           });
 
         if (canvasError) throw canvasError;
 
         // Save individual nodes
-        if (state.nodes.length > 0) {
-          const nodeData = state.nodes.map(node => ({
+        if (stateToPersist.nodes.length > 0) {
+          const nodeData = stateToPersist.nodes.map(node => ({
             id: node.id,
             project_id: projectId,
             node_type: node.type || 'default',
@@ -100,8 +144,8 @@ export function useCanvasPersistence(projectId: string | null) {
         }
 
         // Save connections
-        if (state.edges.length > 0) {
-          const connectionData = state.edges.map(edge => ({
+        if (stateToPersist.edges.length > 0) {
+          const connectionData = stateToPersist.edges.map(edge => ({
             id: edge.id,
             project_id: projectId,
             from_node_id: edge.source,
@@ -160,13 +204,24 @@ export function useCanvasPersistence(projectId: string | null) {
 
     try {
       // Load canvas data - using type assertion for tables not in current types
-      const { data: canvasData, error: canvasError } = await (supabase as any)
+      const { data: canvasData1, error: canvasError1 } = await (supabase as any)
         .from('project_canvas')
         .select('canvas_data')
         .eq('project_id', projectId)
         .maybeSingle();
 
-      if (canvasError) throw canvasError;
+      let canvasRecord = canvasData1;
+      if (canvasError1 && (canvasError1 as any).code === 'PGRST116') {
+        const { data: canvasList, error: canvasListError } = await (supabase as any)
+          .from('project_canvas')
+          .select('canvas_data')
+          .eq('project_id', projectId)
+          .limit(1);
+        if (canvasListError) throw canvasListError;
+        canvasRecord = canvasList?.[0] ?? null;
+      } else if (canvasError1) {
+        throw canvasError1;
+      }
 
       // Load individual nodes
       const { data: nodesData, error: nodesError } = await (supabase as any)
@@ -203,7 +258,7 @@ export function useCanvasPersistence(projectId: string | null) {
         style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 }
       }));
 
-      const viewport = canvasData?.canvas_data?.viewport || { x: 0, y: 0, zoom: 0.8 };
+      const viewport = canvasRecord?.canvas_data?.viewport || { x: 0, y: 0, zoom: 0.8 };
 
       const newState: CanvasState = { nodes, edges, viewport };
       setCanvasState(newState);

@@ -60,10 +60,11 @@ function ProjectCanvasFlow() {
   const onConnect = useCallback(
     (params: Connection) => {
       const edge = {
+        id: crypto.randomUUID(),
         ...params,
         type: 'custom',
         style: { stroke: 'hsl(var(--project-accent-light))', strokeWidth: 2 },
-      };
+      } as Edge;
       const newEdges = addEdge(edge, edges);
       updateCanvas({ edges: newEdges });
     },
@@ -71,7 +72,7 @@ function ProjectCanvasFlow() {
   );
 
   const addNewNode = (type: 'project' | 'team' | 'task') => {
-    const id = `${type}-${Date.now()}`;
+    const id = crypto.randomUUID();
     const newNode: Node = {
       id,
       type,
