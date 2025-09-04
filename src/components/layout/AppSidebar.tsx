@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddProjectDialog } from "@/components/project/AddProjectDialog";
 import { ProjectSettingsDialog } from "@/components/project/ProjectSettingsDialog";
-import { ProjectActionsMenu } from "@/components/project/ProjectActionsMenu";
 import { ProjectSearchBar } from "@/components/project/ProjectSearchBar";
 import { useProjects } from "@/hooks/useProjects";
 import { useProjectManagement } from "@/hooks/useProjectManagement";
@@ -50,9 +49,6 @@ export function AppSidebar() {
     // Real-time subscription will automatically update the list
   };
 
-  const handleProjectDuplicate = (newProject: any) => {
-    refetch();
-  };
 
   // Load recent projects
   useEffect(() => {
@@ -242,14 +238,6 @@ export function AppSidebar() {
                                     </div>
                                   </div>
                                 </SidebarMenuSubButton>
-                                <div className="pr-1">
-                                  <ProjectActionsMenu
-                                    project={project}
-                                    onEdit={() => setSettingsOpen(true)}
-                                    onDelete={() => handleProjectDeleted(project.id)}
-                                    onDuplicate={handleProjectDuplicate}
-                                  />
-                                </div>
                               </div>
                             </SidebarMenuSubItem>
                           ))}
