@@ -24,9 +24,10 @@ import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
 import { useProjectManagement } from "@/hooks/useProjectManagement";
 import { useCanvasPersistence } from "@/hooks/useCanvasPersistence";
+import { useCanvasLazyLoading } from "@/hooks/useCanvasLazyLoading";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FolderKanban, Plus, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { FolderKanban, Plus, Loader2, CheckCircle, AlertCircle, Activity, Database } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 
@@ -47,13 +48,27 @@ const initialEdges: Edge[] = [];
 function ProjectCanvasFlow() {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
-  const { setViewport } = useReactFlow();
+  const [showPerformanceInfo, setShowPerformanceInfo] = useState(false);
+  const { setViewport, getViewport } = useReactFlow();
   const { currentProject } = useProject();
   const { updateLastAccessed } = useProjectManagement();
   
-  // Use canvas persistence hook
-  const { canvasState, updateCanvas, isLoading, saveStatus } = useCanvasPersistence(currentProject?.id || null);
-  const { nodes, edges } = canvasState;
+  // Use lazy loading for optimal performance
+  const { 
+    nodes: lazyNodes, 
+    edges: lazyEdges, 
+    isLoading: lazyLoading, 
+    updateViewport: updateLazyViewport,
+    debugInfo 
+  } = useCanvasLazyLoading(currentProject?.id || null);
+
+  // Use canvas persistence for saving changes
+  const { updateCanvas, saveStatus } = useCanvasPersistence(currentProject?.id || null);
+  
+  // Combine nodes and edges from both sources
+  const nodes = lazyNodes;
+  const edges = lazyEdges;
+  const isLoading = lazyLoading;
   
   const nodeClassName = (node: Node) => node.type || 'default';
   
@@ -71,17 +86,48 @@ function ProjectCanvasFlow() {
     [edges, updateCanvas],
   );
 
-  const addNewNode = (type: 'project' | 'team' | 'task') => {
+  // Handle viewport changes for lazy loading
+  const onMove = useCallback((event: any, viewport: any) => {
+    // Get canvas container size for viewport calculations
+    const container = document.querySelector('.react-flow__viewport');
+    const containerRect = container?.getBoundingClientRect();
+    const width = containerRect?.width || 1200;
+    const height = containerRect?.height || 800;
+    
+    updateLazyViewport(viewport, width, height);
+  }, [updateLazyViewport]);
+
+  // Add new node with immediate save
+  const addNewNode = useCallback((type: 'project' | 'team' | 'task') => {
     const id = crypto.randomUUID();
+    const viewport = getViewport();
+    
+    // Place new nodes in the center of current viewport
+    const centerX = (-viewport.x / viewport.zoom) + (window.innerWidth / 2) / viewport.zoom;
+    const centerY = (-viewport.y / viewport.zoom) + (window.innerHeight / 2) / viewport.zoom;
+    
     const newNode: Node = {
       id,
       type,
-      position: { x: Math.random() * 500 + 100, y: Math.random() * 400 + 100 },
+      position: { 
+        x: centerX + (Math.random() - 0.5) * 200, 
+        y: centerY + (Math.random() - 0.5) * 200 
+      },
       data: { ...getDefaultNodeData(type), isNew: true },
     };
     
-    updateCanvas({ nodes: [...nodes, newNode] });
-  };
+    // Save to persistence system
+    updateCanvas({ nodes: [...nodes, newNode], edges });
+    
+    // Refresh lazy loading to include new node
+    setTimeout(() => {
+      const container = document.querySelector('.react-flow__viewport');
+      const containerRect = container?.getBoundingClientRect();
+      const width = containerRect?.width || 1200;
+      const height = containerRect?.height || 800;
+      updateLazyViewport(viewport, width, height);
+    }, 100);
+  }, [nodes, edges, updateCanvas, getViewport, updateLazyViewport]);
 
   const deleteSelectedNodes = useCallback(() => {
     const newNodes = nodes.filter((node) => !selectedNodes.includes(node.id));
@@ -266,8 +312,52 @@ function ProjectCanvasFlow() {
             </BreadcrumbList>
           </Breadcrumb>
           
-          {/* Save Status Indicator */}
+          {/* Save Status and Performance Indicators */}
           <div className="flex items-center gap-2">
+            {/* Performance Info Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPerformanceInfo(!showPerformanceInfo)}
+              className="h-6 px-2"
+            >
+              <Activity className="h-3 w-3" />
+            </Button>
+            
+            {/* Performance Info Display */}
+            {showPerformanceInfo && (
+              <div className="flex items-center gap-2 text-xs">
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <Database className="h-3 w-3" />
+                  {debugInfo.loadedNodes}/{debugInfo.totalNodes} nodes
+                </Badge>
+                {debugInfo.queryTime > 0 && (
+                  <Badge variant="outline">
+                    {debugInfo.queryTime.toFixed(0)}ms
+                  </Badge>
+                )}
+                {debugInfo.loadedChunks > 0 && (
+                  <Badge variant="outline">
+                    {debugInfo.loadedChunks} chunks
+                  </Badge>
+                )}
+                {debugInfo.isSmallCanvas && (
+                  <Badge variant="secondary">
+                    Small canvas mode
+                  </Badge>
+                )}
+              </div>
+            )}
+
+            {/* Loading indicator for lazy loading */}
+            {isLoading && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Loading nodes...
+              </Badge>
+            )}
+
+            {/* Save Status Indicators */}
             {saveStatus.isSaving && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -313,6 +403,7 @@ function ProjectCanvasFlow() {
           onSelectionChange={onSelectionChange}
           onNodeContextMenu={onNodeContextMenu}
           onEdgeContextMenu={onEdgeContextMenu}
+          onMove={onMove}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
           fitView
