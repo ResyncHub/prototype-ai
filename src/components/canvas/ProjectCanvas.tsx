@@ -1,10 +1,12 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import {
   ReactFlow,
   MiniMap,
   Controls,
   Background,
   addEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
   Connection,
   Edge,
   Node,
@@ -13,6 +15,8 @@ import {
   ReactFlowProvider,
   NodeMouseHandler,
   EdgeMouseHandler,
+  type NodeChange,
+  type EdgeChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -48,7 +52,9 @@ function ProjectCanvasFlow() {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
-  const { setViewport, getViewport } = useReactFlow();
+  const [hasFitted, setHasFitted] = useState(false);
+  const { setViewport, getViewport, fitView } = useReactFlow();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { currentProject } = useProject();
   const { updateLastAccessed } = useProjectManagement();
   
@@ -95,15 +101,26 @@ function ProjectCanvasFlow() {
   // Add new node (no auto-save)
   const addNewNode = useCallback((type: 'project' | 'team' | 'task') => {
     const id = crypto.randomUUID();
+
+    // Place new node at the center of current viewport
+    const viewport = getViewport();
+    const rect = containerRef.current?.getBoundingClientRect();
+    const centerX = (rect?.width || 0) / 2;
+    const centerY = (rect?.height || 0) / 2;
+    const position = {
+      x: (centerX - viewport.x) / viewport.zoom,
+      y: (centerY - viewport.y) / viewport.zoom,
+    };
+
     const newNode: Node = {
       id,
       type,
-      position: { x: Math.random() * 500 + 100, y: Math.random() * 400 + 100 },
+      position,
       data: { ...getDefaultNodeData(type), isNew: true },
     };
     
     updateCanvas({ nodes: [...nodes, newNode] });
-  }, [nodes, updateCanvas]);
+  }, [nodes, updateCanvas, getViewport]);
 
   const deleteSelectedNodes = useCallback(() => {
     const newNodes = nodes.filter((node) => !selectedNodes.includes(node.id));
@@ -142,33 +159,13 @@ function ProjectCanvasFlow() {
     // Context menu functionality can be added here
   }, []);
 
-  // Handle node and edge changes
-  const onNodesChange = useCallback((changes: any) => {
-    // Apply changes to current nodes
-    const updatedNodes = nodes.map(node => {
-      const change = changes.find((c: any) => c.id === node.id);
-      if (!change) return node;
-      
-      switch (change.type) {
-        case 'position':
-          return change.position ? { ...node, position: change.position } : node;
-        case 'dimensions':
-          return change.dimensions ? { ...node, ...change.dimensions } : node;
-        case 'remove':
-          return null;
-        default:
-          return node;
-      }
-    }).filter(Boolean) as Node[];
-    
-    updateCanvas({ nodes: updatedNodes });
+  // Handle node and edge changes (optimized)
+  const onNodesChange = useCallback((changes: NodeChange[]) => {
+    updateCanvas({ nodes: applyNodeChanges(changes, nodes) });
   }, [nodes, updateCanvas]);
 
-  const onEdgesChange = useCallback((changes: any) => {
-    const updatedEdges = edges.filter(edge => 
-      !changes.some((c: any) => c.id === edge.id && c.type === 'remove')
-    );
-    updateCanvas({ edges: updatedEdges });
+  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
+    updateCanvas({ edges: applyEdgeChanges(changes, edges) });
   }, [edges, updateCanvas]);
 
   // Update last accessed when project is selected
@@ -182,6 +179,7 @@ function ProjectCanvasFlow() {
   useEffect(() => {
     setSelectedNodes([]);
     setSelectedEdges([]);
+    setHasFitted(false);
   }, [currentProject?.id]);
 
   const getDefaultNodeData = (type: string) => {
