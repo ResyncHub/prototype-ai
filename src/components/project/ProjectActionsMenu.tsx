@@ -21,6 +21,7 @@ import {
 import { Project } from "@/hooks/useProjects";
 import { useProjectManagement } from "@/hooks/useProjectManagement";
 import { useToast } from "@/hooks/use-toast";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface ProjectActionsMenuProps {
   project: Project;
@@ -38,6 +39,7 @@ export const ProjectActionsMenu = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { duplicateProject, loading } = useProjectManagement();
   const { toast } = useToast();
+  const { setOpen } = useSidebar();
 
   const handleDuplicate = async () => {
     try {
@@ -55,7 +57,7 @@ export const ProjectActionsMenu = ({
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => open && setOpen(true)}>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="ghost" 

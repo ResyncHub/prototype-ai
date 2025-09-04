@@ -78,7 +78,12 @@ export function AppSidebar() {
       className="border-sidebar-border bg-sidebar top-12 h-[calc(100svh-3rem)] group"
       collapsible="icon"
       onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseLeave={(e) => {
+        const next = e.relatedTarget as HTMLElement | null;
+        // Don't collapse when moving into Radix dropdown content
+        if (next && next.closest('[data-radix-popper-content-wrapper]')) return;
+        setOpen(false);
+      }}
     >
       <SidebarContent className="py-3 px-2 group-data-[collapsible=icon]:px-1">
         <SidebarGroup className="group-data-[collapsible=icon]:p-1">
