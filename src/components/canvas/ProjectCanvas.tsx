@@ -24,6 +24,7 @@ import '@xyflow/react/dist/style.css';
 import ProjectNode from "./ProjectNode";
 import TeamNode from "./TeamNode";
 import TaskNode from "./TaskNode";
+import FileNode from "./FileNode";
 import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
@@ -39,6 +40,7 @@ const nodeTypes = {
   project: ProjectNode,
   team: TeamNode,
   task: TaskNode,
+  file: FileNode,
 };
 
 const edgeTypes = {
@@ -49,7 +51,7 @@ const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
 
-function ProjectCanvasFlow() {
+function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
@@ -108,7 +110,7 @@ function ProjectCanvasFlow() {
   );
 
   // Add new node (no auto-save)
-  const addNewNode = useCallback((type: 'project' | 'team' | 'task') => {
+  const addNewNode = useCallback((type: 'project' | 'team' | 'task' | 'file') => {
     const id = crypto.randomUUID();
 
     // Place new node at the center of current viewport
@@ -129,7 +131,36 @@ function ProjectCanvasFlow() {
     };
     
     updateCanvas({ nodes: [...nodes, newNode] });
+  // Add file node from sidebar
+  const addFileNode = useCallback((fileData: any) => {
+    const id = crypto.randomUUID();
+
+    // Place new node at the center of current viewport
+    const viewport = getViewport();
+    const rect = containerRef.current?.getBoundingClientRect();
+    const centerX = (rect?.width || 0) / 2;
+    const centerY = (rect?.height || 0) / 2;
+    const position = {
+      x: (centerX - viewport.x) / viewport.zoom,
+      y: (centerY - viewport.y) / viewport.zoom,
+    };
+
+    const newNode: Node = {
+      id,
+      type: 'file',
+      position,
+      data: { ...fileData, isNew: true },
+    };
+    
+    updateCanvas({ nodes: [...nodes, newNode] });
   }, [nodes, updateCanvas, getViewport]);
+
+  // Expose addFileNode to parent component
+  React.useEffect(() => {
+    if (onAddFileNode) {
+      (window as any).addFileNodeToCanvas = addFileNode;
+    }
+  }, [addFileNode, onAddFileNode]);
 
   const deleteSelectedNodes = useCallback(() => {
     const newNodes = nodes.filter((node) => !selectedNodes.includes(node.id));
@@ -213,6 +244,16 @@ function ProjectCanvasFlow() {
           assignee: 'Unassigned',
           status: 'todo',
           dueDate: new Date().toISOString().split('T')[0]
+        };
+      case 'file':
+        return {
+          filename: 'sample-file.pdf',
+          originalFilename: 'Sample File.pdf',
+          fileSize: 1024000,
+          fileType: 'pdf',
+          fileUrl: '#',
+          mimeType: 'application/pdf',
+          uploadedAt: new Date().toISOString()
         };
       default:
         return {};
@@ -385,10 +426,10 @@ function ProjectCanvasFlow() {
   );
 }
 
-export function ProjectCanvas() {
+export function ProjectCanvas({ onAddFileNode }: ProjectCanvasProps = {}) {
   return (
     <ReactFlowProvider>
-      <ProjectCanvasFlow />
+      <ProjectCanvasFlow onAddFileNode={onAddFileNode} />
     </ReactFlowProvider>
   );
 }

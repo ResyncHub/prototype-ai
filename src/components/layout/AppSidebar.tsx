@@ -6,6 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { AddProjectDialog } from "@/components/project/AddProjectDialog";
 import { ProjectSettingsDialog } from "@/components/project/ProjectSettingsDialog";
 import { ProjectSearchBar } from "@/components/project/ProjectSearchBar";
+import { FilesTab } from "@/components/files/FilesTab";
 import { useProjects } from "@/hooks/useProjects";
 import { useProjectManagement } from "@/hooks/useProjectManagement";
 import { useProject } from "@/contexts/ProjectContext";
@@ -13,10 +14,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  onAddFileNode?: (fileData: any) => void;
+}
+
+export function AppSidebar({ onAddFileNode }: AppSidebarProps = {}) {
   const { open, setOpen } = useSidebar();
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [recentOpen, setRecentOpen] = useState(false);
+  const [filesOpen, setFilesOpen] = useState(false);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -133,8 +139,35 @@ export function AppSidebar() {
                 </Collapsible>
               )}
 
+              {/* Files Section */}
+              {currentProject && (
+                <Collapsible 
+                  open={filesOpen} 
+                  onOpenChange={setFilesOpen}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton 
+                        className="h-10 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2"
+                        tooltip="Project Files"
+                      >
+                        <FileText className="h-4 w-4 group-data-[collapsible=icon]:mx-auto" />
+                        <span className="group-data-[collapsible=icon]:hidden">Files</span>
+                        <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="group-data-[collapsible=icon]:hidden">
+                        <FilesTab onAddFileNode={onAddFileNode} />
+                      </div>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              )}
+
               {/* All Projects Section */}
-              <Collapsible 
+              <Collapsible
                 open={projectsOpen} 
                 onOpenChange={setProjectsOpen}
                 className="group/collapsible"

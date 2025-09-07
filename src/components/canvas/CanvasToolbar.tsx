@@ -1,12 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink } from "lucide-react";
+import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink, FileText } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
 interface CanvasToolbarProps {
-  onAddNode: (type: 'project' | 'team' | 'task') => void;
+  onAddNode: (type: 'project' | 'team' | 'task' | 'file') => void;
   onClearCanvas: () => void;
   selectedCount: number;
 }
@@ -59,6 +59,18 @@ export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: Canva
               title="Add Task (K)"
             >
               <CheckSquare className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                onAddNode('file');
+                toast.success("Added new file node");
+              }}
+              className="h-8 px-2 hover:bg-project-accent hover:text-primary-foreground transition-colors"
+              title="Add File Node (F)"
+            >
+              <FileText className="h-4 w-4" />
             </Button>
           </div>
           

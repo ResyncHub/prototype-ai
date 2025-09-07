@@ -122,7 +122,7 @@ export const useFileUpload = (projectId: string | null) => {
 
         // Save file metadata to database
         const { data: dbData, error: dbError } = await supabase
-          .from('project_files')
+          .from('project_files' as any)
           .insert({
             project_id: projectId,
             filename: uniqueFilename,
@@ -147,7 +147,7 @@ export const useFileUpload = (projectId: string | null) => {
         ));
 
         // Add to files list
-        setFiles(prev => [dbData, ...prev]);
+        setFiles(prev => [(dbData as any) as FileUpload, ...prev]);
 
         toast.success(`File "${file.name}" uploaded successfully`);
 
@@ -178,13 +178,13 @@ export const useFileUpload = (projectId: string | null) => {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('project_files')
+        .from('project_files' as any)
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setFiles(data || []);
+      setFiles(((data || []) as any) as FileUpload[]);
     } catch (error) {
       console.error('Error fetching files:', error);
       toast.error('Failed to load files');
@@ -207,7 +207,7 @@ export const useFileUpload = (projectId: string | null) => {
 
       // Delete from database
       const { error: dbError } = await supabase
-        .from('project_files')
+        .from('project_files' as any)
         .delete()
         .eq('id', fileId);
 
@@ -226,7 +226,7 @@ export const useFileUpload = (projectId: string | null) => {
   const renameFile = useCallback(async (fileId: string, newName: string) => {
     try {
       const { error } = await supabase
-        .from('project_files')
+        .from('project_files' as any)
         .update({ original_filename: newName })
         .eq('id', fileId);
 

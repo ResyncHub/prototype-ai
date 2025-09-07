@@ -78,6 +78,10 @@ All colors MUST be HSL.
     /* Task colors */
     --task-accent: var(--brand-red);
     --task-accent-light: var(--red-accent);
+
+    /* File colors */
+    --file-accent: var(--brand-red);
+    --file-accent-light: var(--red-accent);
      
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--brand-red)), hsl(var(--red-accent)));
@@ -113,6 +117,10 @@ All colors MUST be HSL.
 
 .react-flow__minimap .task {
   fill: hsl(var(--task-accent));
+}
+
+.react-flow__minimap .file {
+  fill: hsl(var(--file-accent));
 }
 
 .react-flow__minimap .default {
@@ -161,6 +169,16 @@ All colors MUST be HSL.
     45deg,
     hsl(var(--task-accent)),
     hsl(var(--task-accent)) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+.new-file-animation::before {
+  background: repeating-linear-gradient(
+    45deg,
+    hsl(var(--file-accent)),
+    hsl(var(--file-accent)) 8px,
     transparent 8px,
     transparent 16px
   );

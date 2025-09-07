@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      file_canvas_nodes: {
+        Row: {
+          created_at: string | null
+          file_id: string
+          id: string
+          node_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_id: string
+          id?: string
+          node_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_id?: string
+          id?: string
+          node_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "file_canvas_nodes_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "project_files"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "file_canvas_nodes_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "project_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -115,6 +151,62 @@ export type Database = {
             columns: ["to_node_id"]
             isOneToOne: false
             referencedRelation: "project_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_files: {
+        Row: {
+          created_at: string | null
+          file_size: number
+          file_type: string
+          file_url: string
+          filename: string
+          id: string
+          mime_type: string
+          original_filename: string
+          processed_for_ai: boolean | null
+          project_id: string
+          storage_path: string
+          updated_at: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_size: number
+          file_type: string
+          file_url: string
+          filename: string
+          id?: string
+          mime_type: string
+          original_filename: string
+          processed_for_ai?: boolean | null
+          project_id: string
+          storage_path: string
+          updated_at?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string | null
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          filename?: string
+          id?: string
+          mime_type?: string
+          original_filename?: string
+          processed_for_ai?: boolean | null
+          project_id?: string
+          storage_path?: string
+          updated_at?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_files_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
