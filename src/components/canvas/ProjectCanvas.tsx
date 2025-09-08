@@ -84,7 +84,7 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
   // Ensure React Flow knows about all handle positions (fixes handle-id edge errors)
   useEffect(() => {
     nodes.forEach((n) => updateNodeInternals(n.id));
-  }, [nodes.length, updateNodeInternals]);
+  }, [nodes, updateNodeInternals]);
 
   // Mark initial load complete once first lazy load finishes + auto-fit
   useEffect(() => {
