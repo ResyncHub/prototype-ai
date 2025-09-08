@@ -1,14 +1,14 @@
-import React, { memo } from "react";
+import React, { memo, useState, useCallback } from "react";
 import { Handle, Position, NodeProps } from "@xyflow/react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Download, Trash2, Image, FileType, FileIcon } from "lucide-react";
+import { FileText, Download, Trash2, Image, FileType, FileIcon, Plus, X } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { useReactFlow } from "@xyflow/react";
 import { cn } from "@/lib/utils";
 
-interface FileNodeData extends Record<string, unknown> {
+interface FileData {
   filename: string;
   originalFilename: string;
   fileSize: number;
@@ -16,6 +16,11 @@ interface FileNodeData extends Record<string, unknown> {
   fileUrl: string;
   mimeType: string;
   uploadedAt: string;
+}
+
+interface FileNodeData extends Record<string, unknown> {
+  title?: string;
+  files?: FileData[];
   isNew?: boolean;
 }
 
@@ -49,15 +54,47 @@ const formatFileSize = (bytes: number) => {
 };
 
 const FileNode = ({ data, id }: FileNodeProps) => {
-  const { deleteElements } = useReactFlow();
+  const { deleteElements, updateNode } = useReactFlow();
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const files = data.files || [];
+  const title = data.title || "File Container";
 
   const handleDelete = () => {
     deleteElements({ nodes: [{ id }] });
   };
 
-  const handleDownload = () => {
-    window.open(data.fileUrl, '_blank');
+  const handleDownload = (fileUrl: string) => {
+    window.open(fileUrl, '_blank');
   };
+
+  const handleRemoveFile = useCallback((fileIndex: number) => {
+    const newFiles = files.filter((_, index) => index !== fileIndex);
+    updateNode(id, { data: { ...data, files: newFiles } });
+  }, [files, id, data, updateNode]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    try {
+      const fileData = JSON.parse(e.dataTransfer.getData('application/json'));
+      const newFiles = [...files, fileData];
+      updateNode(id, { data: { ...data, files: newFiles } });
+    } catch (error) {
+      console.error('Error adding file to node:', error);
+    }
+  }, [files, id, data, updateNode]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  }, []);
 
   const getFileTypeColor = (fileType: string) => {
     switch (fileType) {
@@ -77,10 +114,13 @@ const FileNode = ({ data, id }: FileNodeProps) => {
   return (
     <Card 
       className={cn(
-        "min-w-[280px] shadow-lg border-2 transition-all hover:shadow-xl bg-card",
+        "min-w-[300px] max-w-[400px] shadow-lg border-2 transition-all hover:shadow-xl bg-card",
         data.isNew && "new-node-animation new-file-animation",
-        "nodrag"
+        isDragOver && "border-primary bg-primary/5"
       )}
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
     >
       <Handle
         type="target"
@@ -88,62 +128,24 @@ const FileNode = ({ data, id }: FileNodeProps) => {
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
       
-      <CardContent className="p-4 space-y-3">
-        {/* File Header */}
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
-            {getFileIcon(data.fileType, 8)}
-          </div>
-          
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-card-foreground truncate" title={data.originalFilename}>
-              {data.originalFilename}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {formatFileSize(data.fileSize)}
-            </p>
-          </div>
-
-          <Badge 
-            variant="outline" 
-            className={cn("text-xs", getFileTypeColor(data.fileType))}
-          >
-            {data.fileType.toUpperCase()}
-          </Badge>
-        </div>
-
-        {/* File Info */}
-        <div className="text-xs text-muted-foreground">
-          <p>Uploaded: {new Date(data.uploadedAt).toLocaleDateString()}</p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownload}
-            className="flex-1 hover:bg-primary hover:text-primary-foreground"
-          >
-            <Download className="h-4 w-4 mr-1" />
-            Download
-          </Button>
-          
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="hover:bg-destructive hover:text-destructive-foreground"
+                className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground nodrag"
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-3 w-3" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Remove File Node</AlertDialogTitle>
+                <AlertDialogTitle>Remove File Container</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to remove this file from the canvas? This won't delete the actual file from your project.
+                  Are you sure you want to remove this file container from the canvas?
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -155,6 +157,57 @@ const FileNode = ({ data, id }: FileNodeProps) => {
             </AlertDialogContent>
           </AlertDialog>
         </div>
+      </CardHeader>
+      
+      <CardContent className="pt-0">
+        {files.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-muted-foreground/25 rounded-lg">
+            <Plus className="h-8 w-8 text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground mb-1">No files yet</p>
+            <p className="text-xs text-muted-foreground">
+              Drag files from the sidebar to add them here
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {files.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 p-2 rounded border hover:bg-muted/50 group"
+              >
+                <div className="flex-shrink-0">
+                  {getFileIcon(file.fileType, 4)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium truncate" title={file.originalFilename}>
+                    {file.originalFilename}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatFileSize(file.fileSize)}
+                  </p>
+                </div>
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 hover:bg-primary hover:text-primary-foreground nodrag"
+                    onClick={() => handleDownload(file.fileUrl)}
+                  >
+                    <Download className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground nodrag"
+                    onClick={() => handleRemoveFile(index)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
 
       <Handle

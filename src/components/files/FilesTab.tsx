@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Upload, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileManagement } from './FileManagement';
+import { FileListView } from './FileListView';
 import { useProject } from '@/contexts/ProjectContext';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 interface FilesTabProps {
   onAddFileNode?: (fileData: any) => void;
@@ -11,6 +13,22 @@ interface FilesTabProps {
 
 export const FilesTab = ({ onAddFileNode }: FilesTabProps) => {
   const { currentProject } = useProject();
+  const {
+    files,
+    uploadQueue,
+    loading,
+    uploadFiles,
+    fetchFiles,
+    deleteFile,
+    renameFile
+  } = useFileUpload(currentProject?.id || null);
+
+  // Fetch files when project changes
+  useEffect(() => {
+    if (currentProject?.id) {
+      fetchFiles();
+    }
+  }, [currentProject?.id, fetchFiles]);
   
   const handleFileSelect = (file: any) => {
     if (onAddFileNode) {
@@ -67,13 +85,17 @@ export const FilesTab = ({ onAddFileNode }: FilesTabProps) => {
           </div>
 
           <TabsContent value="manage" className="flex-1 mt-0">
-            <FileManagement onFileSelect={handleFileSelect} />
+            <FileListView 
+              files={files}
+              loading={loading}
+              onDelete={deleteFile}
+              onRename={renameFile}
+              onFileSelect={handleFileSelect}
+            />
           </TabsContent>
 
           <TabsContent value="upload" className="flex-1 mt-0">
-            <div className="p-4">
-              <FileManagement onFileSelect={handleFileSelect} />
-            </div>
+            <FileManagement onFileSelect={handleFileSelect} />
           </TabsContent>
         </Tabs>
       </div>

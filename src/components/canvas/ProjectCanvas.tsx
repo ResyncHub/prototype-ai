@@ -254,13 +254,8 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
         };
       case 'file':
         return {
-          filename: 'sample-file.pdf',
-          originalFilename: 'Sample File.pdf',
-          fileSize: 1024000,
-          fileType: 'pdf',
-          fileUrl: '#',
-          mimeType: 'application/pdf',
-          uploadedAt: new Date().toISOString()
+          title: 'File Container',
+          files: []
         };
       default:
         return {};
