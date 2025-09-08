@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect, useRef } from "react";
+import React from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -35,6 +36,10 @@ import { Button } from "@/components/ui/button";
 import { FolderKanban, Plus, Loader2, CheckCircle, AlertCircle, Save } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
+
+interface ProjectCanvasProps {
+  onAddFileNode?: (fileData: any) => void;
+}
 
 const nodeTypes = {
   project: ProjectNode,
@@ -131,6 +136,8 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
     };
     
     updateCanvas({ nodes: [...nodes, newNode] });
+  }, [nodes, updateCanvas, getViewport]);
+
   // Add file node from sidebar
   const addFileNode = useCallback((fileData: any) => {
     const id = crypto.randomUUID();
@@ -156,7 +163,7 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
   }, [nodes, updateCanvas, getViewport]);
 
   // Expose addFileNode to parent component
-  React.useEffect(() => {
+  useEffect(() => {
     if (onAddFileNode) {
       (window as any).addFileNodeToCanvas = addFileNode;
     }
@@ -426,7 +433,8 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
   );
 }
 
-export function ProjectCanvas({ onAddFileNode }: ProjectCanvasProps = {}) {
+export function ProjectCanvas(props: ProjectCanvasProps = {}) {
+  const { onAddFileNode } = props;
   return (
     <ReactFlowProvider>
       <ProjectCanvasFlow onAddFileNode={onAddFileNode} />
