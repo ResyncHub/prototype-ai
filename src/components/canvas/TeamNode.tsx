@@ -35,60 +35,18 @@ function TeamNode({ data, id }: TeamNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-green-950/50 to-emerald-900/30 border-2 border-green-500/30 shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:border-green-400/50 transition-all duration-300 relative group rounded-lg ${data.isNew ? 'new-team-animation' : ''}`}>
-      {/* Left handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="left-source"
-        type="source" 
-        position={Position.Left} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
+      {/* Two connectors only: target (left) and source (right) */}
       <Handle 
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Top handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="top-source"
-        type="source" 
-        position={Position.Top} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
-      <Handle 
-        id="top-target"
-        type="target" 
-        position={Position.Top} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
         position={Position.Right} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
-      <Handle 
-        id="right-target"
-        type="target" 
-        position={Position.Right} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Bottom handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="bottom-source"
-        type="source" 
-        position={Position.Bottom} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
-      <Handle 
-        id="bottom-target"
-        type="target" 
-        position={Position.Bottom} 
-        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}

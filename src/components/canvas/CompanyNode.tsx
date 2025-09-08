@@ -42,60 +42,18 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-indigo-950/50 to-purple-900/30 border-2 border-indigo-500/30 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:border-indigo-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-company-animation' : ''}`}>
-      {/* Left handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="left-source"
-        type="source" 
-        position={Position.Left} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
+      {/* Two connectors only: target (left) and source (right) */}
       <Handle 
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Top handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="top-source"
-        type="source" 
-        position={Position.Top} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
-      <Handle 
-        id="top-target"
-        type="target" 
-        position={Position.Top} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
         position={Position.Right} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
-      <Handle 
-        id="right-target"
-        type="target" 
-        position={Position.Right} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
-      />
-      
-      {/* Bottom handle - source and target overlapped to appear as one */}
-      <Handle 
-        id="bottom-source"
-        type="source" 
-        position={Position.Bottom} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
-      />
-      <Handle 
-        id="bottom-target"
-        type="target" 
-        position={Position.Bottom} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}

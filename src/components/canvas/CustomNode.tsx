@@ -73,59 +73,17 @@ function CustomNode({ data, id }: CustomNodeProps) {
       nodeType="Custom Node"
     >
       <Card className={`w-56 ${gradientClass} transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-custom-animation' : ''}`}>
-        {/* Left handles - both source and target */}
-        <Handle 
-          id="left-source"
-          type="source" 
-          position={Position.Left} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
+        {/* Two connectors only: target (left) and source (right) */}
         <Handle 
           id="left-target"
           type="target" 
           position={Position.Left} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
-        
-        {/* Top handles - both source and target */}
-        <Handle 
-          id="top-source"
-          type="source" 
-          position={Position.Top} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
-        <Handle 
-          id="top-target"
-          type="target" 
-          position={Position.Top} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
-        
-        {/* Right handles - both source and target */}
         <Handle 
           id="right-source"
           type="source" 
           position={Position.Right} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
-        <Handle 
-          id="right-target"
-          type="target" 
-          position={Position.Right} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
-        
-        {/* Bottom handles - both source and target */}
-        <Handle 
-          id="bottom-source"
-          type="source" 
-          position={Position.Bottom} 
-          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
-        />
-        <Handle 
-          id="bottom-target"
-          type="target" 
-          position={Position.Bottom} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         

@@ -122,34 +122,14 @@ const FileNode = ({ data, id }: FileNodeProps) => {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
-      {/* Left handles - both source and target */}
-      <Handle
-        id="left-source"
-        type="source"
-        position={Position.Left}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
+      {/* Two connectors only: target (left) and source (right) */}
       <Handle
         id="left-target"
         type="target"
         position={Position.Left}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
-      
-      {/* Top handles - both source and target */}
-      <Handle
-        id="top-source"
-        type="source"
-        position={Position.Top}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
-      <Handle
-        id="top-target"
-        type="target"
-        position={Position.Top}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
-      
+
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
@@ -232,31 +212,10 @@ const FileNode = ({ data, id }: FileNodeProps) => {
         )}
       </CardContent>
 
-      {/* Right handles - both source and target */}
       <Handle
         id="right-source"
         type="source"
         position={Position.Right}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
-      <Handle
-        id="right-target"
-        type="target"
-        position={Position.Right}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
-      
-      {/* Bottom handles - both source and target */}
-      <Handle
-        id="bottom-source"
-        type="source"
-        position={Position.Bottom}
-        className="w-3 h-3 bg-file-accent border-2 border-white"
-      />
-      <Handle
-        id="bottom-target"
-        type="target"
-        position={Position.Bottom}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
     </Card>
