@@ -41,19 +41,27 @@ export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: Canva
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  onAddNode('team');
-                  toast.success("Added new team");
-                }}
                 className="h-8 px-2 hover:bg-project-accent hover:text-primary-foreground transition-colors"
-                title="Add Team (T)"
+                title="Team Options"
               >
                 <Users className="h-4 w-4" />
               </Button>
               
               {/* Dropdown Menu */}
-              <div className="absolute top-full left-0 mt-1 hidden group-hover:block z-50">
+              <div className="absolute top-full left-0 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="bg-card border border-border rounded-lg shadow-lg min-w-[160px] py-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      onAddNode('team');
+                      toast.success("Added new team");
+                    }}
+                    className="w-full justify-start px-3 py-2 h-auto text-sm hover:bg-accent"
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Add Team
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"
