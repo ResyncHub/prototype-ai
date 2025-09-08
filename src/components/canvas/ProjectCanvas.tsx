@@ -317,6 +317,11 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
             </div>
           </CardHeader>
         </Card>
+        <AddProjectDialog 
+          open={addProjectOpen} 
+          onOpenChange={setAddProjectOpen}
+          onProjectCreated={handleProjectCreated}
+        />
       </div>
     );
   }
