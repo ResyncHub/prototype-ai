@@ -19,7 +19,7 @@ interface AppSidebarProps {
   onProjectCreated?: (project: any) => void;
 }
 
-export function AppSidebar({ onAddFileNode, onProjectCreated: externalOnProjectCreated }: AppSidebarProps = {}) {
+export function AppSidebar({ onAddFileNode, onProjectCreated: externalOnProjectCreated }: AppSidebarProps) {
   const { open, setOpen } = useSidebar();
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [recentOpen, setRecentOpen] = useState(false);
