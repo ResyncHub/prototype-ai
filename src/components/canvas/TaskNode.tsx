@@ -58,25 +58,25 @@ function TaskNode({ data, id }: TaskNodeProps) {
     <Card className={`w-56 bg-gradient-to-br from-orange-950/50 to-amber-900/30 border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:border-orange-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-task-animation' : ''}`}>
       <Handle 
         id="target-left"
-        type="target" 
+        type="source" 
         position={Position.Left} 
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="target-top"
-        type="target" 
+        type="source" 
         position={Position.Top} 
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-right"
-        type="source" 
+        type="target" 
         position={Position.Right} 
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-bottom"
-        type="source" 
+        type="target" 
         position={Position.Bottom} 
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />

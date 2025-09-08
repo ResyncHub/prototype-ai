@@ -124,13 +124,13 @@ const FileNode = ({ data, id }: FileNodeProps) => {
     >
       <Handle
         id="target-top"
-        type="target"
+        type="source"
         position={Position.Top}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
       <Handle
         id="target-left"
-        type="target"
+        type="source"
         position={Position.Left}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
@@ -219,13 +219,13 @@ const FileNode = ({ data, id }: FileNodeProps) => {
 
       <Handle
         id="source-bottom"
-        type="source"
+        type="target"
         position={Position.Bottom}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
       <Handle
         id="source-right"
-        type="source"
+        type="target"
         position={Position.Right}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />

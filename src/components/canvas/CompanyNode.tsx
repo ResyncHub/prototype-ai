@@ -44,25 +44,25 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
     <Card className={`w-56 bg-gradient-to-br from-indigo-950/50 to-purple-900/30 border-2 border-indigo-500/30 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:border-indigo-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-company-animation' : ''}`}>
       <Handle 
         id="target-left"
-        type="target" 
+        type="source" 
         position={Position.Left} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="target-top"
-        type="target" 
+        type="source" 
         position={Position.Top} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-right"
-        type="source" 
+        type="target" 
         position={Position.Right} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-bottom"
-        type="source" 
+        type="target" 
         position={Position.Bottom} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />

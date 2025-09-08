@@ -45,25 +45,25 @@ function MemberNode({ data, id }: MemberNodeProps) {
     <Card className={`w-56 bg-gradient-to-br from-cyan-950/50 to-blue-900/30 border-2 border-cyan-500/30 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:border-cyan-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-member-animation' : ''}`}>
       <Handle 
         id="target-left"
-        type="target" 
+        type="source" 
         position={Position.Left} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="target-top"
-        type="target" 
+        type="source" 
         position={Position.Top} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-right"
-        type="source" 
+        type="target" 
         position={Position.Right} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
         id="source-bottom"
-        type="source" 
+        type="target" 
         position={Position.Bottom} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />

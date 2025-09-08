@@ -75,25 +75,25 @@ function CustomNode({ data, id }: CustomNodeProps) {
       <Card className={`w-56 ${gradientClass} transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-custom-animation' : ''}`}>
         <Handle 
           id="target-left"
-          type="target" 
+          type="source" 
           position={Position.Left} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         <Handle 
           id="target-top"
-          type="target" 
+          type="source" 
           position={Position.Top} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         <Handle 
           id="source-right"
-          type="source" 
+          type="target" 
           position={Position.Right} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         <Handle 
           id="source-bottom"
-          type="source" 
+          type="target" 
           position={Position.Bottom} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
