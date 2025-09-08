@@ -40,6 +40,7 @@ import { AddProjectDialog } from "@/components/project/AddProjectDialog";
 
 interface ProjectCanvasProps {
   onAddFileNode?: (fileData: any) => void;
+  onCreateProject?: () => void;
 }
 
 const nodeTypes = {
@@ -57,22 +58,16 @@ const initialNodes: Node[] = [];
 
 const initialEdges: Edge[] = [];
 
-function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
+function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProps) {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [hasFitted, setHasFitted] = useState(false);
-  const [addProjectOpen, setAddProjectOpen] = useState(false);
   const { setViewport, getViewport, fitView } = useReactFlow();
   const containerRef = useRef<HTMLDivElement>(null);
   const { currentProject, setCurrentProject } = useProject();
   const { updateLastAccessed } = useProjectManagement();
   
-  // Handler for project creation
-  const handleProjectCreated = (project: any) => {
-    setCurrentProject(project);
-    setAddProjectOpen(false);
-  };
   
   // Use canvas persistence for manual save only
   const { canvasState, updateCanvas, manualSave, saveStatus, isLoading } = useCanvasPersistence(currentProject?.id || null);
@@ -306,7 +301,7 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
               <Button 
                 size="lg" 
                 className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                onClick={() => setAddProjectOpen(true)}
+                onClick={() => onCreateProject?.()}
               >
                 <Plus className="h-5 w-5 mr-2" />
                 Create Your First Project
@@ -317,11 +312,6 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
             </div>
           </CardHeader>
         </Card>
-        <AddProjectDialog 
-          open={addProjectOpen} 
-          onOpenChange={setAddProjectOpen}
-          onProjectCreated={handleProjectCreated}
-        />
       </div>
     );
   }
@@ -441,27 +431,16 @@ function ProjectCanvasFlow({ onAddFileNode }: ProjectCanvasProps) {
           />
         </ReactFlow>
       </div>
-      
-      <AddProjectDialog 
-        open={addProjectOpen} 
-        onOpenChange={setAddProjectOpen}
-        onProjectCreated={handleProjectCreated}
-      />
     </div>
   );
 }
 
 export function ProjectCanvas(props: ProjectCanvasProps = {}) {
-  const { onAddFileNode } = props;
-  
-  // Handler for project creation
-  const handleProjectCreated = (project: any) => {
-    // This will be handled by the ProjectContext
-  };
+  const { onAddFileNode, onCreateProject } = props;
 
   return (
     <ReactFlowProvider>
-      <ProjectCanvasFlow onAddFileNode={onAddFileNode} />
+      <ProjectCanvasFlow onAddFileNode={onAddFileNode} onCreateProject={onCreateProject} />
     </ReactFlowProvider>
   );
 }

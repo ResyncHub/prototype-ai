@@ -16,9 +16,10 @@ import { format } from "date-fns";
 
 interface AppSidebarProps {
   onAddFileNode?: (fileData: any) => void;
+  onProjectCreated?: (project: any) => void;
 }
 
-export function AppSidebar({ onAddFileNode }: AppSidebarProps = {}) {
+export function AppSidebar({ onAddFileNode, onProjectCreated: externalOnProjectCreated }: AppSidebarProps = {}) {
   const { open, setOpen } = useSidebar();
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [recentOpen, setRecentOpen] = useState(false);
@@ -35,6 +36,7 @@ export function AppSidebar({ onAddFileNode }: AppSidebarProps = {}) {
   const handleProjectCreated = (project: any) => {
     setCurrentProject(project);
     refetch();
+    externalOnProjectCreated?.(project);
   };
 
   const handleProjectUpdated = (project: any) => {

@@ -5,15 +5,19 @@ import { TopNavigation } from "./TopNavigation";
 interface AppLayoutProps {
   children: React.ReactNode;
   onAddFileNode?: (fileData: any) => void;
+  onProjectCreated?: (project: any) => void;
 }
 
-export function AppLayout({ children, onAddFileNode }: AppLayoutProps) {
+export function AppLayout({ children, onAddFileNode, onProjectCreated }: AppLayoutProps) {
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex flex-col w-full bg-canvas-background">
         <TopNavigation />
         <div className="flex flex-1">
-          <AppSidebar onAddFileNode={onAddFileNode} />
+        <AppSidebar 
+          onAddFileNode={onAddFileNode} 
+          onProjectCreated={onProjectCreated}
+        />
           <SidebarInset className="flex-1">
             <main className="flex-1 overflow-hidden">
               {children}
