@@ -19,6 +19,7 @@ import {
   type NodeChange,
   type EdgeChange,
   ConnectionMode,
+  useUpdateNodeInternals,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
@@ -78,6 +79,12 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
   // Use canvas persistence for manual save only
   const { canvasState, updateCanvas, manualSave, saveStatus, isLoading } = useCanvasPersistence(currentProject?.id || null);
   const { nodes, edges } = canvasState;
+  const updateNodeInternals = useUpdateNodeInternals();
+
+  // Ensure React Flow knows about all handle positions (fixes handle-id edge errors)
+  useEffect(() => {
+    nodes.forEach((n) => updateNodeInternals(n.id));
+  }, [nodes.length, updateNodeInternals]);
 
   // Mark initial load complete once first lazy load finishes + auto-fit
   useEffect(() => {
