@@ -71,29 +71,60 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-blue-950/50 to-blue-900/30 border-2 border-blue-500/30 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:border-blue-400/50 transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
+      {/* Left handles - both source and target */}
       <Handle 
-        id="target-left"
+        id="left-source"
         type="source" 
         position={Position.Left} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
-        id="target-top"
+        id="left-target"
+        type="target" 
+        position={Position.Left} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      
+      {/* Top handles - both source and target */}
+      <Handle 
+        id="top-source"
         type="source" 
         position={Position.Top} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
-        id="source-right"
+        id="top-target"
+        type="target" 
+        position={Position.Top} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      
+      {/* Right handles - both source and target */}
+      <Handle 
+        id="right-source"
+        type="source" 
+        position={Position.Right} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
+        id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      
+      {/* Bottom handles - both source and target */}
+      <Handle 
+        id="bottom-source"
+        type="source" 
+        position={Position.Bottom} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
-        id="source-bottom"
+        id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       
       {/* Delete Button */}
