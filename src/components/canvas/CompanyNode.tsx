@@ -42,7 +42,7 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-indigo-950/50 to-purple-900/30 border-2 border-indigo-500/30 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 hover:border-indigo-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-company-animation' : ''}`}>
-      {/* Left handles - both source and target */}
+      {/* Left handle - source and target overlapped to appear as one */}
       <Handle 
         id="left-source"
         type="source" 
@@ -53,10 +53,10 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Top handles - both source and target */}
+      {/* Top handle - source and target overlapped to appear as one */}
       <Handle 
         id="top-source"
         type="source" 
@@ -67,10 +67,10 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Right handles - both source and target */}
+      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
@@ -81,10 +81,10 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Bottom handles - both source and target */}
+      {/* Bottom handle - source and target overlapped to appear as one */}
       <Handle 
         id="bottom-source"
         type="source" 
@@ -95,7 +95,7 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}

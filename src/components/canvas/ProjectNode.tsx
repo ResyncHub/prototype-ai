@@ -71,7 +71,7 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-blue-950/50 to-blue-900/30 border-2 border-blue-500/30 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:border-blue-400/50 transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
-      {/* Left handles - both source and target */}
+      {/* Left handle - source and target overlapped to appear as one */}
       <Handle 
         id="left-source"
         type="source" 
@@ -82,10 +82,10 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Top handles - both source and target */}
+      {/* Top handle - source and target overlapped to appear as one */}
       <Handle 
         id="top-source"
         type="source" 
@@ -96,10 +96,10 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Right handles - both source and target */}
+      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
@@ -110,10 +110,10 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Bottom handles - both source and target */}
+      {/* Bottom handle - source and target overlapped to appear as one */}
       <Handle 
         id="bottom-source"
         type="source" 
@@ -124,7 +124,7 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}

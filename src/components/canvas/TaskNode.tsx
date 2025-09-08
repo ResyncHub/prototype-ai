@@ -56,7 +56,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-orange-950/50 to-amber-900/30 border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:border-orange-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-task-animation' : ''}`}>
-      {/* Left handles - both source and target */}
+      {/* Left handle - source and target overlapped to appear as one */}
       <Handle 
         id="left-source"
         type="source" 
@@ -67,10 +67,10 @@ function TaskNode({ data, id }: TaskNodeProps) {
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Top handles - both source and target */}
+      {/* Top handle - source and target overlapped to appear as one */}
       <Handle 
         id="top-source"
         type="source" 
@@ -81,10 +81,10 @@ function TaskNode({ data, id }: TaskNodeProps) {
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Right handles - both source and target */}
+      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
@@ -95,10 +95,10 @@ function TaskNode({ data, id }: TaskNodeProps) {
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Bottom handles - both source and target */}
+      {/* Bottom handle - source and target overlapped to appear as one */}
       <Handle 
         id="bottom-source"
         type="source" 
@@ -109,7 +109,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}

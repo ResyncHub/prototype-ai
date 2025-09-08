@@ -43,7 +43,7 @@ function MemberNode({ data, id }: MemberNodeProps) {
 
   return (
     <Card className={`w-56 bg-gradient-to-br from-cyan-950/50 to-blue-900/30 border-2 border-cyan-500/30 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:border-cyan-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-member-animation' : ''}`}>
-      {/* Left handles - both source and target */}
+      {/* Left handle - source and target overlapped to appear as one */}
       <Handle 
         id="left-source"
         type="source" 
@@ -54,10 +54,10 @@ function MemberNode({ data, id }: MemberNodeProps) {
         id="left-target"
         type="target" 
         position={Position.Left} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Top handles - both source and target */}
+      {/* Top handle - source and target overlapped to appear as one */}
       <Handle 
         id="top-source"
         type="source" 
@@ -68,10 +68,10 @@ function MemberNode({ data, id }: MemberNodeProps) {
         id="top-target"
         type="target" 
         position={Position.Top} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Right handles - both source and target */}
+      {/* Right handle - source and target overlapped to appear as one */}
       <Handle 
         id="right-source"
         type="source" 
@@ -82,10 +82,10 @@ function MemberNode({ data, id }: MemberNodeProps) {
         id="right-target"
         type="target" 
         position={Position.Right} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
-      {/* Bottom handles - both source and target */}
+      {/* Bottom handle - source and target overlapped to appear as one */}
       <Handle 
         id="bottom-source"
         type="source" 
@@ -96,7 +96,7 @@ function MemberNode({ data, id }: MemberNodeProps) {
         id="bottom-target"
         type="target" 
         position={Position.Bottom} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full !absolute" 
       />
       
       {/* Delete Button */}
