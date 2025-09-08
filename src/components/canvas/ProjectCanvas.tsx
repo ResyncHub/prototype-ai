@@ -461,7 +461,7 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
           zoomOnScroll={true}
           zoomOnPinch={true}
           connectOnClick={false}
-          connectionMode={ConnectionMode.Strict}
+          connectionMode={ConnectionMode.Loose}
         >
           <Background 
             variant={BackgroundVariant.Dots}

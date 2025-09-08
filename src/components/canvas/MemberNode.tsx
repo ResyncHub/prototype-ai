@@ -67,35 +67,6 @@ function MemberNode({ data, id }: MemberNodeProps) {
         position={Position.Bottom} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
-      {/* Extra handles so you can start or end connections on every side */}
-      <Handle 
-        id="source-left"
-        type="source" 
-        position={Position.Left} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
-        style={{ transform: 'translateY(-10px)' }}
-      />
-      <Handle 
-        id="source-top"
-        type="source" 
-        position={Position.Top} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
-        style={{ transform: 'translateX(-10px)' }}
-      />
-      <Handle 
-        id="target-right"
-        type="target" 
-        position={Position.Right} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
-        style={{ transform: 'translateY(10px)' }}
-      />
-      <Handle 
-        id="target-bottom"
-        type="target" 
-        position={Position.Bottom} 
-        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
-        style={{ transform: 'translateX(10px)' }}
-      />
       
       {/* Delete Button */}
       <Button
