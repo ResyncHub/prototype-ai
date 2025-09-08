@@ -1,12 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink, FileText } from "lucide-react";
+import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink, FileText, Palette } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
 interface CanvasToolbarProps {
-  onAddNode: (type: 'project' | 'team' | 'task' | 'file') => void;
+  onAddNode: (type: 'project' | 'team' | 'task' | 'file' | 'custom') => void;
   onClearCanvas: () => void;
   selectedCount: number;
 }
@@ -71,6 +71,18 @@ export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: Canva
               title="Add File Node (F)"
             >
               <FileText className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                onAddNode('custom');
+                toast.success("Added new custom node");
+              }}
+              className="h-8 px-2 hover:bg-project-accent hover:text-primary-foreground transition-colors"
+              title="Add Custom Node (C)"
+            >
+              <Palette className="h-4 w-4" />
             </Button>
           </div>
           

@@ -26,6 +26,7 @@ import ProjectNode from "./ProjectNode";
 import TeamNode from "./TeamNode";
 import TaskNode from "./TaskNode";
 import FileNode from "./FileNode";
+import CustomNode from "./CustomNode";
 import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
@@ -48,6 +49,7 @@ const nodeTypes = {
   team: TeamNode,
   task: TaskNode,
   file: FileNode,
+  custom: CustomNode,
 };
 
 const edgeTypes = {
@@ -118,7 +120,7 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
   );
 
   // Add new node (no auto-save)
-  const addNewNode = useCallback((type: 'project' | 'team' | 'task' | 'file') => {
+  const addNewNode = useCallback((type: 'project' | 'team' | 'task' | 'file' | 'custom') => {
     const id = crypto.randomUUID();
 
     // Place new node at the center of current viewport
@@ -259,6 +261,16 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
         return {
           title: 'File Container',
           files: []
+        };
+      case 'custom':
+        return {
+          title: 'Custom Node',
+          description: 'Click edit to customize',
+          content: '',
+          tags: [],
+          color: 'purple',
+          priority: 'medium',
+          status: 'draft'
         };
       default:
         return {};
