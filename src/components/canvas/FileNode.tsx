@@ -114,7 +114,7 @@ const FileNode = ({ data, id }: FileNodeProps) => {
   return (
     <Card 
       className={cn(
-        "min-w-[300px] max-w-[400px] shadow-lg border-2 transition-all hover:shadow-xl bg-card",
+        "w-56 shadow-lg border-2 transition-all hover:shadow-xl bg-card",
         data.isNew && "new-node-animation new-file-animation",
         isDragOver && "border-primary bg-primary/5"
       )}

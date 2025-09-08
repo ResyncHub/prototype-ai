@@ -42,7 +42,7 @@ function MemberNode({ data, id }: MemberNodeProps) {
   };
 
   return (
-    <Card className={`w-60 bg-gradient-to-br from-cyan-950/50 to-blue-900/30 border-2 border-cyan-500/30 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:border-cyan-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-member-animation' : ''}`}>
+    <Card className={`w-56 bg-gradient-to-br from-cyan-950/50 to-blue-900/30 border-2 border-cyan-500/30 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:border-cyan-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-member-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 

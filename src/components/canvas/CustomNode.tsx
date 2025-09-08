@@ -72,7 +72,7 @@ function CustomNode({ data, id }: CustomNodeProps) {
       onDelete={() => setShowDeleteDialog(true)}
       nodeType="Custom Node"
     >
-      <Card className={`w-64 ${gradientClass} transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-custom-animation' : ''}`}>
+      <Card className={`w-56 ${gradientClass} transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-custom-animation' : ''}`}>
         <Handle 
           type="target" 
           position={Position.Left} 

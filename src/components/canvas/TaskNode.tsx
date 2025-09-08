@@ -55,7 +55,7 @@ function TaskNode({ data, id }: TaskNodeProps) {
   };
 
   return (
-    <Card className={`w-52 bg-gradient-to-br from-orange-950/50 to-amber-900/30 border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:border-orange-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-task-animation' : ''}`}>
+    <Card className={`w-56 bg-gradient-to-br from-orange-950/50 to-amber-900/30 border-2 border-orange-500/30 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 hover:border-orange-400/50 transition-all duration-300 relative group rounded-xl ${data.isNew ? 'new-task-animation' : ''}`}>
       <Handle 
         type="target" 
         position={Position.Left} 
