@@ -62,8 +62,18 @@ function TaskNode({ data, id }: TaskNodeProps) {
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        type="target" 
+        position={Position.Top} 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
         type="source" 
         position={Position.Right} 
+        className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
         className="!bg-orange-500 !border-orange-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       

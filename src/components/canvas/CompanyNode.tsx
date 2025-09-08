@@ -48,8 +48,18 @@ function CompanyNode({ data, id }: CompanyNodeProps) {
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        type="target" 
+        position={Position.Top} 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
         type="source" 
         position={Position.Right} 
+        className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
         className="!bg-indigo-500 !border-indigo-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       

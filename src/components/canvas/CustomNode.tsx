@@ -79,8 +79,18 @@ function CustomNode({ data, id }: CustomNodeProps) {
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         <Handle 
+          type="target" 
+          position={Position.Top} 
+          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
+        />
+        <Handle 
           type="source" 
           position={Position.Right} 
+          className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
+        />
+        <Handle 
+          type="source" 
+          position={Position.Bottom} 
           className={`!bg-${gradientColor}-500 !border-${gradientColor}-400 !w-4 !h-4 !border-2 !rounded-full`}
         />
         

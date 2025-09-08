@@ -41,8 +41,18 @@ function TeamNode({ data, id }: TeamNodeProps) {
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        type="target" 
+        position={Position.Top} 
+        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
         type="source" 
         position={Position.Right} 
+        className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       

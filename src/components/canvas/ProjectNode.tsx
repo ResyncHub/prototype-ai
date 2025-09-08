@@ -77,8 +77,18 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
       />
       <Handle 
+        type="target" 
+        position={Position.Top} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+      />
+      <Handle 
         type="source" 
         position={Position.Right} 
+        className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
       />
       

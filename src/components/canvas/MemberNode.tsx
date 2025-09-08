@@ -49,8 +49,18 @@ function MemberNode({ data, id }: MemberNodeProps) {
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        type="target" 
+        position={Position.Top} 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
         type="source" 
         position={Position.Right} 
+        className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
+      />
+      <Handle 
+        type="source" 
+        position={Position.Bottom} 
         className="!bg-cyan-500 !border-cyan-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       
