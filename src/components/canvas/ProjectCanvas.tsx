@@ -27,6 +27,8 @@ import TeamNode from "./TeamNode";
 import TaskNode from "./TaskNode";
 import FileNode from "./FileNode";
 import CustomNode from "./CustomNode";
+import MemberNode from "./MemberNode";
+import CompanyNode from "./CompanyNode";
 import CustomEdge from "./CustomEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { useProject } from "@/contexts/ProjectContext";
@@ -50,6 +52,8 @@ const nodeTypes = {
   task: TaskNode,
   file: FileNode,
   custom: CustomNode,
+  member: MemberNode,
+  company: CompanyNode,
 };
 
 const edgeTypes = {
@@ -120,7 +124,7 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
   );
 
   // Add new node (no auto-save)
-  const addNewNode = useCallback((type: 'project' | 'team' | 'task' | 'file' | 'custom') => {
+  const addNewNode = useCallback((type: 'project' | 'team' | 'task' | 'file' | 'custom' | 'member' | 'company') => {
     const id = crypto.randomUUID();
 
     // Place new node at the center of current viewport
@@ -271,6 +275,22 @@ function ProjectCanvasFlow({ onAddFileNode, onCreateProject }: ProjectCanvasProp
           color: 'purple',
           priority: 'medium',
           status: 'draft'
+        };
+      case 'member':
+        return {
+          name: 'New Member',
+          role: 'Developer',
+          email: 'member@company.com',
+          department: 'Engineering',
+          status: 'active'
+        };
+      case 'company':
+        return {
+          name: 'New Company',
+          industry: 'Technology',
+          size: '1-50 employees',
+          location: 'Remote',
+          status: 'active'
         };
       default:
         return {};

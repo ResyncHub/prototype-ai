@@ -1,12 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink, FileText, Palette } from "lucide-react";
+import { FolderKanban, Users, CheckSquare, RotateCcw, ZoomIn, ZoomOut, Eraser, Link, Unlink, FileText, Palette, User, Building2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
 interface CanvasToolbarProps {
-  onAddNode: (type: 'project' | 'team' | 'task' | 'file' | 'custom') => void;
+  onAddNode: (type: 'project' | 'team' | 'task' | 'file' | 'custom' | 'member' | 'company') => void;
   onClearCanvas: () => void;
   selectedCount: number;
 }
@@ -36,18 +36,51 @@ export function CanvasToolbar({ onAddNode, onClearCanvas, selectedCount }: Canva
             >
               <FolderKanban className="h-4 w-4" />
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                onAddNode('team');
-                toast.success("Added new team");
-              }}
-              className="h-8 px-2 hover:bg-project-accent hover:text-primary-foreground transition-colors"
-              title="Add Team (T)"
-            >
-              <Users className="h-4 w-4" />
-            </Button>
+            {/* Team Dropdown */}
+            <div className="relative group">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  onAddNode('team');
+                  toast.success("Added new team");
+                }}
+                className="h-8 px-2 hover:bg-project-accent hover:text-primary-foreground transition-colors"
+                title="Add Team (T)"
+              >
+                <Users className="h-4 w-4" />
+              </Button>
+              
+              {/* Dropdown Menu */}
+              <div className="absolute top-full left-0 mt-1 hidden group-hover:block z-50">
+                <div className="bg-card border border-border rounded-lg shadow-lg min-w-[160px] py-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      onAddNode('member');
+                      toast.success("Added new member");
+                    }}
+                    className="w-full justify-start px-3 py-2 h-auto text-sm hover:bg-accent"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Add Member
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      onAddNode('company');
+                      toast.success("Added new company");
+                    }}
+                    className="w-full justify-start px-3 py-2 h-auto text-sm hover:bg-accent"
+                  >
+                    <Building2 className="h-4 w-4 mr-2" />
+                    Add Company
+                  </Button>
+                </div>
+              </div>
+            </div>
             <Button
               variant="ghost"
               size="sm"
