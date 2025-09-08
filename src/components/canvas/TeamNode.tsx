@@ -36,21 +36,25 @@ function TeamNode({ data, id }: TeamNodeProps) {
   return (
     <Card className={`w-56 bg-gradient-to-br from-green-950/50 to-emerald-900/30 border-2 border-green-500/30 shadow-lg shadow-green-500/20 hover:shadow-green-500/40 hover:border-green-400/50 transition-all duration-300 relative group rounded-lg ${data.isNew ? 'new-team-animation' : ''}`}>
       <Handle 
+        id="target-left"
         type="target" 
         position={Position.Left} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        id="target-top"
         type="target" 
         position={Position.Top} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        id="source-right"
         type="source" 
         position={Position.Right} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 
       />
       <Handle 
+        id="source-bottom"
         type="source" 
         position={Position.Bottom} 
         className="!bg-green-500 !border-green-400 !w-4 !h-4 !border-2 !rounded-full" 

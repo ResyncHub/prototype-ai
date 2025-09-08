@@ -72,21 +72,25 @@ function ProjectNode({ data, id }: ProjectNodeProps) {
   return (
     <Card className={`w-56 bg-gradient-to-br from-blue-950/50 to-blue-900/30 border-2 border-blue-500/30 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:border-blue-400/50 transition-all duration-300 relative group ${data.isNew ? 'new-node-animation' : ''}`}>
       <Handle 
+        id="target-left"
         type="target" 
         position={Position.Left} 
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
       />
       <Handle 
+        id="target-top"
         type="target" 
         position={Position.Top} 
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
       />
       <Handle 
+        id="source-right"
         type="source" 
         position={Position.Right} 
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 
       />
       <Handle 
+        id="source-bottom"
         type="source" 
         position={Position.Bottom} 
         className="!bg-blue-500 !border-blue-400 !w-4 !h-4 !border-2" 

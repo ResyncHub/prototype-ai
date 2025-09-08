@@ -123,8 +123,15 @@ const FileNode = ({ data, id }: FileNodeProps) => {
       onDragLeave={handleDragLeave}
     >
       <Handle
+        id="target-top"
         type="target"
         position={Position.Top}
+        className="w-3 h-3 bg-file-accent border-2 border-white"
+      />
+      <Handle
+        id="target-left"
+        type="target"
+        position={Position.Left}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
       
@@ -211,8 +218,15 @@ const FileNode = ({ data, id }: FileNodeProps) => {
       </CardContent>
 
       <Handle
+        id="source-bottom"
         type="source"
         position={Position.Bottom}
+        className="w-3 h-3 bg-file-accent border-2 border-white"
+      />
+      <Handle
+        id="source-right"
+        type="source"
+        position={Position.Right}
         className="w-3 h-3 bg-file-accent border-2 border-white"
       />
     </Card>
